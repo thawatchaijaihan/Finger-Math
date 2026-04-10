@@ -929,10 +929,10 @@
                 <h2>โจทย์ฝึก</h2>
                 <p>เลือกแบบโจทย์ แล้วลองคิดในใจก่อนกดเฉลย</p>
                 <div class="practice-buttons">
-                    <button class="btn btn-action" onclick="newPracticeProblem('add-no-carry')">บวก ไม่มีตัวทด</button>
-                    <button class="btn btn-action" onclick="newPracticeProblem('add-carry')">บวก มีตัวทด</button>
+                    <button class="btn btn-action" onclick="newPracticeProblem('add-no-carry')">บวก ไม่ทด</button>
+                    <button class="btn btn-action" onclick="newPracticeProblem('add-carry')">บวก มีทด</button>
                     <button class="btn btn-action" onclick="newPracticeProblem('subtract-no-borrow')">ลบ ไม่ยืม</button>
-                    <button class="btn btn-action" onclick="newPracticeProblem('subtract-borrow')">ลบ ยืม 1 สิบ</button>
+                    <button class="btn btn-action" onclick="newPracticeProblem('subtract-borrow')">ลบ มียืม</button>
                 </div>
                 <div class="practice-board">
                     <div class="practice-badge" id="practiceType">เลือกแบบโจทย์</div>
@@ -1056,10 +1056,10 @@
         let currentPracticeProblem = null;
 
         const practiceLabels = {
-            'add-no-carry': 'บวก: ไม่มีตัวทด',
-            'add-carry': 'บวก: มีตัวทด',
+            'add-no-carry': 'บวก: ไม่ทด',
+            'add-carry': 'บวก: มีทด',
             'subtract-no-borrow': 'ลบ: หลักหน่วยไม่ติดลบ',
-            'subtract-borrow': 'ลบ: หลักหน่วยติดลบ ยืม 1 สิบ'
+            'subtract-borrow': 'ลบ: มียืม'
         };
 
         function clampNumber(number) {
