@@ -150,32 +150,25 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 120px;
+            width: 170px;
         }
 
         .hundreds-box {
-            background: #fff7ed;
-            border: 4px solid #fb7185;
-            border-radius: 18px;
+            background: white;
+            border: 4px solid #e0e0e0;
+            border-radius: 20px;
             box-sizing: border-box;
             width: 100%;
-            min-width: 120px;
-            max-width: 140px;
-            aspect-ratio: 1 / 1;
+            min-width: 0;
+            max-width: none;
+            min-height: 84px;
+            padding: 12px 20px;
             overflow: hidden;
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-        }
-
-        .hundreds-box::before {
-            content: '';
-            position: absolute;
-            inset: 12px;
-            border: 3px dashed rgba(251, 113, 133, 0.55);
-            border-radius: 14px;
         }
 
         .hand-display {
@@ -192,18 +185,15 @@
         }
 
         .hundreds-box .hundreds-value {
-            position: relative;
-            z-index: 1;
             font-family: 'Fredoka One', cursive;
-            font-size: 1.4rem;
-            color: #FF0000;
+            font-size: 3rem;
+            color: #667eea;
             line-height: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             margin: 0;
-            text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
         }
 
         /* Hand Cards */
@@ -276,6 +266,10 @@
             font-size: 1rem;
             color: #888;
             margin-bottom: 8px;
+        }
+
+        .memory-label {
+            line-height: 1.35;
         }
 
         .number-input {
@@ -735,9 +729,9 @@
                 min-width: unset;
                 width: 100%;
                 min-height: unset;
-                padding: 0;
+                padding: 10px 12px;
+                border-radius: 15px;
                 box-sizing: border-box;
-                aspect-ratio: 1 / 1;
             }
 
             .hand-display {
@@ -759,7 +753,7 @@
             }
 
             .hundreds-value {
-                font-size: 1.2rem;
+                font-size: 2.5rem;
             }
 
             /* Number Input */
@@ -770,7 +764,7 @@
             }
 
             .memory-unit {
-                width: 96px;
+                width: 120px;
             }
 
             .number-label {
@@ -883,7 +877,7 @@
             }
 
             .hundreds-value {
-                font-size: 1.1rem;
+                font-size: 2rem;
             }
 
             .number-input {
@@ -892,7 +886,7 @@
             }
 
             .memory-unit {
-                width: 86px;
+                width: 104px;
             }
 
             .calc-inputs {
@@ -956,7 +950,7 @@
 
             <div class="number-hero" id="input">
                 <div class="memory-unit is-hidden" id="hundredsUnit" aria-hidden="true">
-                    <div class="hand-title">ทดในใจ<br>หลักร้อย</div>
+                    <div class="number-label memory-label">ทดในใจ<br>หลักร้อย</div>
                     <div class="hundreds-box" id="hundredsBox">
                         <div class="hundreds-value" id="hundredsDisplay">0</div>
                     </div>
