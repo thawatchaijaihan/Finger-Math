@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จินตคณิต - Finger Math</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 40px);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3rem;
+            color: white;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+        }
+
+        .navbar {
+            background: #16a34a;
+            padding: 8px 15px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .nav-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* === 3-Column Display Area === */
+        .main-display {
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .unit-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            padding: 5px;
+            width: 100%;
+            min-width: 120px;
+            min-height: 180px;
+            transition: all 0.3s ease;
+        }
+
+        .unit-card:hover {
+            box-shadow: none;
+        }
+
+        .hundreds-box {
+            background: #fff7ed;
+            border: 4px solid #fb7185;
+            border-radius: 18px;
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 120px;
+            max-width: 140px;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hundreds-box::before {
+            content: '';
+            position: absolute;
+            inset: 12px;
+            border: 3px dashed rgba(251, 113, 133, 0.55);
+            border-radius: 14px;
+        }
+
+        .hand-display {
+            background: transparent;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            transition: all 0.3s ease;
+            width: 100%;
+            min-width: 120px;
+            max-width: 140px;
+        }
+
+        .hundreds-box .hundreds-value {
+            position: relative;
+            z-index: 1;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.4rem;
+            color: #FF0000;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin: 0;
+            text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+        }
+
+        /* Hand Cards */
+        .hand-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .hand-title span {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 3px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-left: 6px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .hand-display {
+            background: transparent;
+            padding: 0;
+            min-height: 150px;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+        }
+
+        .hand-display:hover {
+            background: transparent;
+        }
+
+        .hand-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .hand-image:hover {
+            transform: scale(1.05);
+        }
+
+        /* === Number Display === */
+        .number-hero {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .number-label {
+            font-size: 1rem;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .number-input {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3rem;
+            text-align: center;
+            width: 250px;
+            padding: 12px 20px;
+            border: 4px solid #e0e0e0;
+            border-radius: 20px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: white;
+            color: #667eea;
+        }
+
+        .number-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        }
+
+        .number-input::-webkit-outer-spin-button,
+        .number-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .number-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* === Calculator Inputs === */
+        .calc-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 10px;
+        }
+
+        .calc-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: transparent;
+            padding: 0;
+        }
+
+        .calc-input-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .lesson-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-top: 16px;
+            color: #1f2937;
+        }
+
+        .lesson-section h2 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+        }
+
+        .lesson-section h3 {
+            margin: 20px 0 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .lesson-section p {
+            margin: 0 0 8px;
+            line-height: 1.6;
+            color: #334155;
+        }
+
+        .lesson-section ul {
+            margin: 0;
+            padding-left: 18px;
+            color: #334155;
+        }
+
+        .lesson-section li {
+            margin-bottom: 6px;
+        }
+
+        .lesson-illustration {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin: 12px 0 8px;
+        }
+
+        .lesson-illustration figure {
+            flex: 1 1 120px;
+            min-width: 120px;
+            max-width: 180px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 10px;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+            text-align: center;
+        }
+
+        .lesson-illustration img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 12px;
+        }
+
+        .lesson-illustration figcaption {
+            margin-top: 8px;
+            font-size: 0.82rem;
+            color: #475569;
+        }
+
+        .lesson-example {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 14px 0;
+        }
+
+        @media (max-width: 600px) {
+            .lesson-example {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .lesson-example figure {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 12px;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+            text-align: center;
+        }
+
+        .lesson-example img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 12px;
+        }
+
+        .example-hands {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 8px;
+        }
+
+        .example-hands img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .lesson-example p {
+            margin: 10px 0 0;
+            font-size: 0.9rem;
+            color: #334155;
+        }
+
+        .calc-input {
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 6px 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .calc-input:focus {
+            border-color: #667eea;
+        }
+
+        .calc-input::-webkit-outer-spin-button,
+        .calc-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .calc-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .calc-input-group .btn {
+            margin-top: 5px;
+        }
+
+        /* === Buttons === */
+        .btn {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-action {
+            background: #16a34a;
+            color: white;
+        }
+        .btn-contact {
+            background: #0ea5e9;
+            color: white;
+        }
+        .btn-add {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-subtract {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-clear {
+            background: #16a34a;
+            color: white;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .steps-panel {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 46px;
+            margin: 8px 0 14px;
+            padding: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            color: #334155;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .step {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 30px;
+            padding: 5px 10px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .step-arrow {
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.45);
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 420px;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+            text-align: left;
+        }
+
+        .modal-content h3 {
+            margin: 0 0 10px;
+            font-size: 1.1rem;
+        }
+
+        .modal-content p,
+        .modal-content ul {
+            margin: 0 0 12px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .modal-content ul {
+            padding-left: 18px;
+        }
+
+        /* === Responsive === */
+        @media (max-width: 600px) {
+            body {
+                padding: 0;
+                overflow-x: hidden;
+            }
+
+            .container {
+                max-width: 100%;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+            }
+
+            .card {
+                padding: 10px;
+                border-radius: 0;
+                margin-left: 0;
+                margin-right: 0;
+                margin-bottom: 0;
+            }
+
+            .navbar {
+                border-radius: 0;
+                margin-left: 0;
+                margin-right: 0;
+                margin-bottom: 0;
+            }
+
+            /* 3-Column Display */
+            .main-display {
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+
+            .unit-card {
+                flex: 1;
+                max-width: 120px;
+                padding: 5px;
+                min-width: unset;
+                min-height: 150px;
+            }
+
+            .hundreds-box {
+                min-width: unset;
+                width: 100%;
+                min-height: unset;
+                padding: 0;
+                box-sizing: border-box;
+                aspect-ratio: 1 / 1;
+            }
+
+            .hand-display {
+                width: 100%;
+                min-height: 120px;
+                padding: 0;
+            }
+
+            .hand-image {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+
+            .hand-title {
+                font-size: 0.7rem;
+                margin-bottom: 5px;
+                text-align: center;
+            }
+
+            .hundreds-value {
+                font-size: 1.2rem;
+            }
+
+            /* Number Input */
+            .number-hero {
+                margin-bottom: 10px;
+            }
+
+            .number-label {
+                font-size: 0.85rem;
+                margin-bottom: 5px;
+            }
+
+            .number-input {
+                font-size: 2.5rem;
+                width: 180px;
+                padding: 10px 15px;
+                border-radius: 15px;
+            }
+
+            /* Calculator Inputs */
+            .calc-inputs {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                margin-bottom: 10px;
+            }
+
+            .calc-input-group {
+                min-width: 0;
+                padding: 5px;
+                gap: 8px;
+            }
+
+            .calc-input-group label {
+                font-size: 0.75rem;
+            }
+
+            .calc-input {
+                font-size: 0.9rem;
+                padding: 6px 8px;
+            }
+
+            /* Action Buttons */
+            .action-buttons {
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.45);
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 420px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+            text-align: left;
+        }
+
+        .modal-content h3 {
+            margin: 0 0 10px;
+            font-size: 1.1rem;
+        }
+
+        .modal-content p,
+        .modal-content ul {
+            margin: 0 0 12px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .modal-content ul {
+            padding-left: 18px;
+        }
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 380px) {
+            .main-display {
+                gap: 5px;
+            }
+
+            .unit-card {
+                max-width: 110px;
+                padding: 5px;
+                min-height: 130px;
+            }
+
+            .hand-title {
+                font-size: 0.7rem;
+                white-space: nowrap;
+            }
+
+            .hundreds-value {
+                font-size: 1.1rem;
+            }
+
+            .number-input {
+                font-size: 2rem;
+                width: 150px;
+            }
+
+            .calc-inputs {
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+
+            .calc-input-group {
+                padding: 5px;
+                gap: 6px;
+            }
+
+            .calc-input-group label {
+                font-size: 0.7rem;
+            }
+
+            .calc-input {
+                font-size: 0.8rem;
+                padding: 5px 4px;
+            }
+
+            .btn {
+                font-size: 0.8rem;
+                padding: 8px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="nav-container">
+                <span class="nav-title">🧮 จินตคณิต</span>
+                <div class="nav-links">
+                    <a href="#display">การนับเลข</a>
+                    <a href="#lesson5" id="navLesson5" style="display:none">เลขผสม 5</a>
+                    <a href="#lesson10" id="navLesson10" style="display:none">เลขผสม 10</a>
+                    <a href="#" onclick="event.preventDefault(); openContactPopup()">ติดต่อแอดมิน</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="card" id="display">
+            <div class="main-display">
+                <!-- หลักร้อย -->
+                <div class="unit-card">
+                    <div class="hand-title">ทดในใจ<br>หลักร้อย</div>
+                    <div class="hundreds-box" id="hundredsBox">
+                        <div class="hundreds-value" id="hundredsDisplay">0</div>
+                    </div>
+                </div>
+
+                <!-- หลักสิบ -->
+                <div class="unit-card">
+                    <div class="hand-title">มือซ้าย<br>หลักสิบ</div>
+                    <div class="hand-display">
+                        <img src="images/left/0.png" alt="มือซ้าย" class="hand-image" id="leftHandImage">
+                    </div>
+                </div>
+
+                <!-- หลักหน่วย -->
+                <div class="unit-card">
+                    <div class="hand-title">มือขวา<br>หลักหน่วย</div>
+                    <div class="hand-display">
+                        <img src="images/right/0.png" alt="มือขวา" class="hand-image" id="rightHandImage">
+                    </div>
+                </div>
+            </div>
+
+            <div class="number-hero" id="input">
+                <div class="number-label">ระบุจำนวนที่ต้องการ (0-999)</div>
+                <input type="number" id="numberInput" class="number-input" min="0" max="999" value="0" onclick="this.select()" onfocus="this.value=''" onchange="onInputChange()" onkeyup="onInputChange()">
+            </div>
+
+            <div class="calc-inputs" id="calculate">
+                <div class="calc-input-group">
+                    <label>ระบุจำนวนที่ต้องการบวก</label>
+                    <input type="text" id="addInput" class="calc-input" placeholder="ป้อนจำนวน" onclick="clearCalcInputs()">
+                    <button class="btn btn-add" onclick="addFromInput()">+ บวก</button>
+                </div>
+                <div class="calc-input-group">
+                    <label>ระบุจำนวนที่ต้องการลบ</label>
+                    <input type="text" id="subtractInput" class="calc-input" placeholder="ป้อนจำนวน" onclick="clearCalcInputs()">
+                    <button class="btn btn-subtract" onclick="subtractFromInput()">- ลบ</button>
+                </div>
+            </div>
+            <div class="action-buttons" id="actions">
+                <button class="btn btn-action" onclick="countTo99()">👆 นับนิ้ว</button>
+                <button class="btn btn-action" onclick="randomPractice()">🎲 สุ่มจำนวน</button>
+                <button class="btn btn-clear" onclick="clearAll()">🗑️ ล้าง</button>
+            </div>
+            <div class="steps-panel" id="steps" aria-live="polite"></div>
+
+            <div class="lesson-section" id="lesson5">
+                <h2>เลขผสม ห้า</h2>
+                <p>บทเรียนนี้ฝึกการบวกและลบเลขที่เกี่ยวข้องกับ 5 เพื่อช่วยให้คำนวณเร็วและเข้าใจการใช้เลขผสมในใจได้ดีขึ้น.</p>
+
+                <div class="lesson-example">
+                    <figure>
+                        <div class="example-hands">
+                            <img id="counting-hand-1" src="images/right/2.png" alt="มือขวา นับเลข">
+                        </div>
+                        <p>2 + 3 = 5</p>
+                        <button class="btn btn-action" onclick="startCounting(1, [2,3,4,5])">แสดงตัวอย่าง</button>
+                    </figure>
+                    <figure>
+                        <div class="example-hands">
+                            <img id="counting-hand-2" src="images/right/4.png" alt="มือขวา นับเลข">
+                        </div>
+                        <p>4 + 1 = 5</p>
+                        <button class="btn btn-action" onclick="startCounting(2, [4,5])">แสดงตัวอย่าง</button>
+                    </figure>
+                    <figure>
+                        <div class="example-hands">
+                            <img id="counting-hand-3" src="images/right/3.png" alt="มือขวา นับเลข">
+                        </div>
+                        <p>3 + 2 = 5</p>
+                        <button class="btn btn-action" onclick="startCounting(3, [3,4,5])">แสดงตัวอย่าง</button>
+                    </figure>
+                    <figure>
+                        <div class="example-hands">
+                            <img id="counting-hand-4" src="images/right/1.png" alt="มือขวา นับเลข">
+                        </div>
+                        <p>1 + 4 = 5</p>
+                        <button class="btn btn-action" onclick="startCounting(4, [1,2,3,4,5])">แสดงตัวอย่าง</button>
+                    </figure>
+                </div>
+
+            </div>
+
+            <div class="lesson-section" id="lesson10">
+                <h2>เลขผสม สิบ</h2>
+                <p>บทเรียนนี้สอนการรวมตัวเลขให้ได้ 10 และการลบเพื่อให้ผลลัพธ์เป็น 10 โดยฝึกทั้งการนับและการคำนวณในใจ.</p>
+
+                <div class="lesson-example">
+                    <figure>
+                        <div class="example-hands">
+                            <img id="counting-hand-10-left" src="images/left/0.png" alt="มือซ้าย นับเลข">
+                            <img id="counting-hand-10-right" src="images/right/1.png" alt="มือขวา นับเลข">
+                        </div>
+                        <p>1 + 9 = 10</p>
+                        <button class="btn btn-action" onclick="startCountingSub(10, 'both', [1,2,3,4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
+                    </figure>
+                    <figure>
+                        <div class="example-hands">
+                            <img id="counting-hand-11-left" src="images/left/0.png" alt="มือซ้าย นับเลข">
+                            <img id="counting-hand-11-right" src="images/right/2.png" alt="มือขวา นับเลข">
+                        </div>
+                        <p>2 + 8 = 10</p>
+                        <button class="btn btn-action" onclick="startCountingSub(11, 'both', [2,3,4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
+                    </figure>
+                    <figure>
+                        <div class="example-hands">
+                            <img id="counting-hand-12-left" src="images/left/0.png" alt="มือซ้าย นับเลข">
+                            <img id="counting-hand-12-right" src="images/right/3.png" alt="มือขวา นับเลข">
+                        </div>
+                        <p>3 + 7 = 10</p>
+                        <button class="btn btn-action" onclick="startCountingSub(12, 'both', [3,4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
+                    </figure>
+                    <figure>
+                        <div class="example-hands">
+                            <img id="counting-hand-16-left" src="images/left/0.png" alt="มือซ้าย นับเลข">
+                            <img id="counting-hand-16-right" src="images/right/4.png" alt="มือขวา นับเลข">
+                        </div>
+                        <p>4 + 6 = 10</p>
+                        <button class="btn btn-action" onclick="startCountingSub(16, 'both', [4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
+                    </figure>
+                    <figure>
+                        <div class="example-hands">
+                            <img id="counting-hand-17-left" src="images/left/0.png" alt="มือซ้าย นับเลข">
+                            <img id="counting-hand-17-right" src="images/right/5.png" alt="มือขวา นับเลข">
+                        </div>
+                        <p>5 + 5 = 10</p>
+                        <button class="btn btn-action" onclick="startCountingSub(17, 'both', [5,6,7,8,9,10])">แสดงตัวอย่าง</button>
+                    </figure>
+                </div>
+
+            </div>
+
+            <div class="modal-overlay" id="contactModal" onclick="closeContactPopup(event)">
+                <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
+                    <h3 id="contactModalTitle">ติดต่อแอดมิน</h3>
+                    <p>หากมีคำถามหรือปัญหา กรุณาติดต่อแอดมินผ่านช่องทางด้านล่าง</p>
+                    <ul>
+                        <li>LINE: @example</li>
+                        <li>อีเมล: admin@example.com</li>
+                    </ul>
+                    <button class="btn btn-clear" onclick="closeContactPopup()">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentNumber = 0;
+        let isAnimating = false;
+        let isCounting = false;
+        const MIN_NUMBER = 0;
+        const MAX_NUMBER = 999;
+
+        function clampNumber(number) {
+            return Math.max(MIN_NUMBER, Math.min(MAX_NUMBER, number));
+        }
+
+        function updateHand(handId, digit) {
+            const handImage = document.getElementById(handId === 'leftHand' ? 'leftHandImage' : 'rightHandImage');
+            digit = Math.max(0, Math.min(9, digit));
+            if (handId === 'leftHand') {
+                handImage.src = `images/left/${digit * 10}.png`;
+            } else {
+                handImage.src = `images/right/${digit}.png`;
+            }
+        }
+
+        function updateDisplay(number) {
+            number = clampNumber(number);
+            const input = document.getElementById('numberInput');
+            input.value = number;
+
+            const hundreds = Math.floor(number / 100);
+            const tens = Math.floor((number % 100) / 10);
+            const units = number % 10;
+
+            document.getElementById('hundredsDisplay').textContent = hundreds * 100;
+
+            updateHand('leftHand', tens);
+            updateHand('rightHand', units);
+
+            currentNumber = number;
+        }
+
+        function setNumber(num) {
+            if (isAnimating) return;
+            isCounting = false;
+            num = clampNumber(num);
+            document.getElementById('numberInput').value = num;
+            updateDisplay(num);
+            updateSteps([{ value: num, label: `ตั้งค่า: ${num}` }]);
+        }
+
+        function onInputChange() {
+            const input = document.getElementById('numberInput');
+            let val = parseInt(input.value) || 0;
+            val = clampNumber(val);
+            input.value = val;
+            setNumber(val);
+        }
+
+        function clearAll() {
+            if (isAnimating) return;
+            isCounting = false;
+            updateDisplay(0);
+            updateSteps([{ value: 0, label: 'ล้างค่า: 0' }]);
+        }
+
+        function updateSteps(stepsData) {
+            const container = document.getElementById('steps');
+            if (container) {
+                container.innerHTML = stepsData.map((step, i) => {
+                    let html = `<span class="step">${step.label}</span>`;
+                    if (i < stepsData.length - 1) {
+                        html += '<span class="step-arrow">→</span>';
+                    }
+                    return html;
+                }).join('');
+            }
+        }
+
+        function addFromInput() {
+            const input = document.getElementById('addInput');
+            const subtractInput = document.getElementById('subtractInput');
+            let val = parseInt(input.value) || 0;
+            val = Math.max(0, Math.min(MAX_NUMBER - currentNumber, val));
+            const result = currentNumber + val;
+            input.value = `${currentNumber} + ${val} = ${result}`;
+            subtractInput.value = '';
+            animateCalculation('add', val);
+        }
+
+        function subtractFromInput() {
+            const input = document.getElementById('subtractInput');
+            const addInput = document.getElementById('addInput');
+            let val = parseInt(input.value) || 0;
+            val = clampNumber(val);
+            if (val > currentNumber) {
+                val = currentNumber;
+            }
+            const result = currentNumber - val;
+            input.value = `${currentNumber} - ${val} = ${result}`;
+            addInput.value = '';
+            animateCalculation('subtract', val);
+        }
+
+        function clearCalcInputs() {
+            document.getElementById('addInput').value = '';
+            document.getElementById('subtractInput').value = '';
+        }
+
+        function openContactPopup() {
+            document.getElementById('contactModal').classList.add('visible');
+        }
+
+        function closeContactPopup(event) {
+            if (!event || event.target === event.currentTarget) {
+                document.getElementById('contactModal').classList.remove('visible');
+            }
+        }
+
+        async function animateCalculation(operation, amount) {
+            if (isAnimating) return;
+            isCounting = false;
+            isAnimating = true;
+
+            const start = currentNumber;
+            const end = clampNumber(operation === 'add' ? start + amount : start - amount);
+
+            if (end < 0) {
+                isAnimating = false;
+                return;
+            }
+
+            const opSymbol = operation === 'add' ? '+' : '-';
+            updateSteps([{ value: start, label: `${start} ${opSymbol} ${amount} = ${end}` }]);
+
+            await sleep(500);
+
+            // นับทีละจำนวน
+            const step = operation === 'add' ? 1 : -1;
+            for (let i = start + step; operation === 'add' ? i <= end : i >= end; i += step) {
+                updateDisplay(i);
+                await sleep(2000); // 2 วินาทีต่อจำนวน
+            }
+
+            updateSteps([{ value: end, label: `${start} ${opSymbol} ${amount} = ${end}` }]);
+
+            isAnimating = false;
+        }
+
+        async function randomPractice() {
+            if (isAnimating) return;
+            isCounting = false;
+
+            const ops = ['add', 'subtract'];
+            const op = ops[Math.floor(Math.random() * 2)];
+            const amount = op === 'add' ? Math.floor(Math.random() * 50) + 1 : Math.floor(Math.random() * Math.min(currentNumber || 10, 50)) + 1;
+
+            if (op === 'subtract' && currentNumber < amount) {
+                updateDisplay(Math.floor(Math.random() * 50) + 50);
+            }
+
+            await sleep(1500);
+            animateCalculation(op, amount);
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function countTo99() {
+            if (isAnimating) return;
+            isAnimating = true;
+            isCounting = true;
+            updateSteps([{ value: 0, label: 'เริ่มนับ: 0' }]);
+            updateDisplay(0);
+            await sleep(800);
+
+            for (let i = 1; i <= 99; i++) {
+                if (!isCounting) break;
+                updateDisplay(i);
+                updateSteps([{ value: i, label: `นับ: ${i}` }]);
+                await sleep(2000);
+            }
+
+            isAnimating = false;
+            isCounting = false;
+        }
+
+        // Initialize
+        updateDisplay(0);
+        updateSteps([{ value: 0, label: 'เริ่มต้น: 0' }]);
+
+        // Prevent scroll wheel from changing number inputs
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('wheel', e => e.preventDefault());
+        });
+
+        async function startCounting(exampleId, sequence) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            const img = document.getElementById(`counting-hand-${exampleId}`);
+            if (!img) {
+                isAnimating = false;
+                return;
+            }
+
+            // Show each number in sequence with animation
+            for (let i = 0; i < sequence.length; i++) {
+                img.src = `images/right/${sequence[i]}.png`;
+                await sleep(1500); // 1.5 seconds per number
+            }
+
+            isAnimating = false;
+        }
+
+        async function startCountingSub(exampleId, handType, sequence) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            let imgRight, imgLeft;
+            if (handType === 'both') {
+                imgLeft = document.getElementById(`counting-hand-${exampleId}-left`);
+                imgRight = document.getElementById(`counting-hand-${exampleId}-right`);
+            } else {
+                imgRight = document.getElementById(`counting-hand-${exampleId}`);
+            }
+
+            if (!imgRight || (handType === 'both' && !imgLeft)) {
+                isAnimating = false;
+                return;
+            }
+
+            for (let i = 0; i < sequence.length; i++) {
+                const num = sequence[i];
+                if (handType === 'both') {
+                    const tens = Math.floor(num / 10);
+                    const units = num % 10;
+                    imgLeft.src = `images/left/${tens * 10}.png`;
+                    imgRight.src = `images/right/${units}.png`;
+                } else {
+                    imgRight.src = `images/right/${num}.png`;
+                }
+                await sleep(1500);
+            }
+
+            isAnimating = false;
+        }
+
+        // Nav visibility based on scroll
+        const navLesson5 = document.getElementById('navLesson5');
+        const navLesson10 = document.getElementById('navLesson10');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.target.id === 'lesson5' && entry.isIntersecting) {
+                    navLesson5.style.display = '';
+                }
+                if (entry.target.id === 'lesson10' && entry.isIntersecting) {
+                    navLesson10.style.display = '';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        observer.observe(document.getElementById('lesson5'));
+        observer.observe(document.getElementById('lesson10'));
+    </script>
+</body>
+</html>
