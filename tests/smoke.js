@@ -9,6 +9,12 @@ function expectEqual(actual, expected, label) {
   }
 }
 
+function expectCondition(condition, label) {
+  if (!condition) {
+    throw new Error(label);
+  }
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
@@ -28,9 +34,20 @@ function expectEqual(actual, expected, label) {
 
   const initial = await page.evaluate(() => ({
     steps: Boolean(document.querySelector('#steps')),
+    practice: Boolean(document.querySelector('#practice')),
+    navLinks: Array.from(document.querySelectorAll('.nav-links a')).map(link => ({
+      text: link.textContent.trim(),
+      href: link.getAttribute('href'),
+    })),
     background: getComputedStyle(document.querySelector('#hundredsBox')).backgroundImage,
   }));
   expectEqual(initial.steps, true, 'steps panel exists');
+  expectEqual(initial.practice, true, 'practice section exists');
+  expectEqual(JSON.stringify(initial.navLinks.slice(0, 3)), JSON.stringify([
+    { text: 'การนับเลข', href: '#display' },
+    { text: 'เทคนิค', href: '#lesson5' },
+    { text: 'แบบฝึก', href: '#practice' },
+  ]), 'navbar links');
   expectEqual(initial.background, 'none', 'hundreds box uses local CSS');
 
   await page.locator('#numberInput').fill('27');
@@ -51,7 +68,7 @@ function expectEqual(actual, expected, label) {
   await page.locator('#numberInput').fill('999');
   await page.locator('#numberInput').press('Tab');
   await page.locator('#addInput').fill('1');
-  await page.locator('button.btn-add').click();
+  await page.getByRole('button', { name: '+ บวก' }).click();
   await page.waitForTimeout(50);
   expectEqual(await page.locator('#numberInput').inputValue(), '999', 'addition clamps at 999');
 
@@ -66,10 +83,32 @@ function expectEqual(actual, expected, label) {
   expectEqual(lesson10.left, 'images/left/10.png', 'lesson 10 left hand');
   expectEqual(lesson10.right, 'images/right/0.png', 'lesson 10 right hand');
 
+  for (const type of ['add-no-carry', 'add-carry', 'subtract-no-borrow', 'subtract-borrow']) {
+    const problem = await page.evaluate(problemType => window.newPracticeProblem(problemType), type);
+    const unitA = problem.a % 10;
+    const unitB = problem.b % 10;
+
+    if (type === 'add-no-carry') {
+      expectCondition(problem.operator === '+' && unitA + unitB <= 9, 'addition without carry');
+    }
+    if (type === 'add-carry') {
+      expectCondition(problem.operator === '+' && unitA + unitB > 9, 'addition with carry');
+    }
+    if (type === 'subtract-no-borrow') {
+      expectCondition(problem.operator === '-' && unitA >= unitB, 'subtraction without borrow');
+    }
+    if (type === 'subtract-borrow') {
+      expectCondition(problem.operator === '-' && unitA < unitB, 'subtraction with borrow');
+    }
+
+    const revealed = await page.evaluate(() => window.revealPracticeAnswer());
+    expectEqual(await page.locator('#numberInput').inputValue(), String(revealed.result), `${type} answer display`);
+    expectCondition((await page.locator('#practiceAnswer').textContent()).includes(String(revealed.result)), `${type} answer text`);
+  }
+
   await browser.close();
 
   if (errors.length) {
     throw new Error(`Browser errors:\n${errors.join('\n')}`);
   }
 })();
-
