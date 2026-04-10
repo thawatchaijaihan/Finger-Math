@@ -934,27 +934,6 @@
                 <button class="btn btn-clear" onclick="clearAll()">🗑️ ล้าง</button>
             </div>
 
-            <div class="practice-section" id="practice">
-                <h2>โจทย์ฝึก</h2>
-                <p>เลือกแบบโจทย์ แล้วลองคิดในใจก่อนกดเฉลย</p>
-                <div class="practice-buttons">
-                    <button class="btn btn-action" data-practice-type="add-no-carry" aria-pressed="false" onclick="newPracticeProblem('add-no-carry')">บวก ไม่ทด</button>
-                    <button class="btn btn-action" data-practice-type="add-carry" aria-pressed="false" onclick="newPracticeProblem('add-carry')">บวก มีทด</button>
-                    <button class="btn btn-action" data-practice-type="subtract-no-borrow" aria-pressed="false" onclick="newPracticeProblem('subtract-no-borrow')">ลบ ไม่ยืม</button>
-                    <button class="btn btn-action" data-practice-type="subtract-borrow" aria-pressed="false" onclick="newPracticeProblem('subtract-borrow')">ลบ มียืม</button>
-                </div>
-                <div class="practice-board">
-                    <div class="practice-badge" id="practiceType">เลือกแบบโจทย์</div>
-                    <div class="practice-question" id="practiceQuestion">กดเลือกโจทย์เพื่อเริ่ม</div>
-                    <div class="practice-hint" id="practiceHint">มือด้านบนจะแสดงตัวตั้งของโจทย์</div>
-                    <div class="practice-answer" id="practiceAnswer"></div>
-                    <div class="practice-actions">
-                        <button class="btn btn-add" onclick="revealPracticeAnswer()">เฉลย</button>
-                        <button class="btn btn-clear" onclick="repeatPracticeProblem()">สุ่มอีกข้อ</button>
-                    </div>
-                </div>
-            </div>
-
             <div class="lesson-section" id="lesson5">
                 <h2>เลขผสม ห้า</h2>
                 <p>บทเรียนนี้ฝึกการบวกและลบเลขที่เกี่ยวข้องกับ 5 เพื่อช่วยให้คำนวณเร็วและเข้าใจการใช้เลขผสมในใจได้ดีขึ้น.</p>
@@ -1039,6 +1018,27 @@
                     </figure>
                 </div>
 
+            </div>
+
+            <div class="practice-section" id="practice">
+                <h2>โจทย์ฝึก</h2>
+                <p>เลือกแบบโจทย์ แล้วลองคิดในใจก่อนกดเฉลย</p>
+                <div class="practice-buttons">
+                    <button class="btn btn-action" data-practice-type="add-no-carry" aria-pressed="false" onclick="newPracticeProblem('add-no-carry')">บวก ไม่ทด</button>
+                    <button class="btn btn-action" data-practice-type="add-carry" aria-pressed="false" onclick="newPracticeProblem('add-carry')">บวก มีทด</button>
+                    <button class="btn btn-action" data-practice-type="subtract-no-borrow" aria-pressed="false" onclick="newPracticeProblem('subtract-no-borrow')">ลบ ไม่ยืม</button>
+                    <button class="btn btn-action" data-practice-type="subtract-borrow" aria-pressed="false" onclick="newPracticeProblem('subtract-borrow')">ลบ มียืม</button>
+                </div>
+                <div class="practice-board">
+                    <div class="practice-badge" id="practiceType">เลือกแบบโจทย์</div>
+                    <div class="practice-question" id="practiceQuestion">กดเลือกโจทย์เพื่อเริ่ม</div>
+                    <div class="practice-hint" id="practiceHint">มือด้านบนจะแสดงตัวตั้งของโจทย์</div>
+                    <div class="practice-answer" id="practiceAnswer"></div>
+                    <div class="practice-actions">
+                        <button class="btn btn-add" onclick="revealPracticeAnswer()">เฉลย</button>
+                        <button class="btn btn-clear" onclick="repeatPracticeProblem()">สุ่มอีกข้อ</button>
+                    </div>
+                </div>
             </div>
 
             <div class="modal-overlay" id="contactModal" onclick="closeContactPopup(event)">

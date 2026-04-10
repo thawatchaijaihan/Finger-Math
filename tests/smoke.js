@@ -39,10 +39,15 @@ function expectCondition(condition, label) {
       text: link.textContent.trim(),
       href: link.getAttribute('href'),
     })),
+    practiceAfterLesson10: Boolean(
+      document.querySelector('#lesson10').compareDocumentPosition(document.querySelector('#practice')) &
+      Node.DOCUMENT_POSITION_FOLLOWING
+    ),
     background: getComputedStyle(document.querySelector('#hundredsBox')).backgroundImage,
   }));
   expectEqual(initial.steps, false, 'steps panel is removed');
   expectEqual(initial.practice, true, 'practice section exists');
+  expectEqual(initial.practiceAfterLesson10, true, 'practice follows lesson 10');
   expectEqual(JSON.stringify(initial.navLinks.slice(0, 3)), JSON.stringify([
     { text: 'การนับเลข', href: '#display' },
     { text: 'เทคนิค', href: '#lesson5' },
