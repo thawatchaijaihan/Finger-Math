@@ -55,6 +55,15 @@ function expectCondition(condition, label) {
   ]), 'navbar links');
   expectEqual(initial.background, 'none', 'hundreds box uses local CSS');
 
+  await page.getByRole('link', { name: 'เทคนิค' }).click();
+  await page.waitForTimeout(50);
+  const lesson5Scroll = await page.evaluate(() => {
+    const navBottom = document.querySelector('.navbar').getBoundingClientRect().bottom;
+    const lessonTop = document.querySelector('#lesson5').getBoundingClientRect().top;
+    return { navBottom, lessonTop };
+  });
+  expectCondition(lesson5Scroll.lessonTop >= lesson5Scroll.navBottom, 'technique link clears sticky nav');
+
   await page.locator('#numberInput').fill('27');
   await page.locator('#numberInput').press('Tab');
   await page.waitForTimeout(50);
