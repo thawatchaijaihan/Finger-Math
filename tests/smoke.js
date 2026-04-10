@@ -89,9 +89,14 @@ function expectCondition(condition, label) {
   const after123 = await page.evaluate(() => ({
     hundreds: document.querySelector('#hundredsDisplay').textContent,
     hundredsHidden: getComputedStyle(document.querySelector('#hundredsUnit')).display === 'none',
+    hundredsInNumberHero: document.querySelector('#hundredsUnit').parentElement.id === 'input',
+    hundredsRight: document.querySelector('#hundredsUnit').getBoundingClientRect().right,
+    numberLeft: document.querySelector('.number-entry').getBoundingClientRect().left,
   }));
   expectEqual(after123.hundreds, '100', 'hundreds display over 99');
   expectEqual(after123.hundredsHidden, false, 'hundreds appears over 99');
+  expectEqual(after123.hundredsInNumberHero, true, 'hundreds is beside number input');
+  expectCondition(after123.hundredsRight <= after123.numberLeft, 'hundreds sits left of number input');
 
   await page.locator('#numberInput').fill('999');
   await page.locator('#numberInput').press('Tab');

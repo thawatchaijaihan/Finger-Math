@@ -139,8 +139,18 @@
             min-width: 180px;
         }
 
-        .unit-card.is-hidden {
+        .unit-card.is-hidden,
+        .memory-unit.is-hidden {
             display: none;
+        }
+
+        .memory-unit {
+            display: flex;
+            flex: 0 0 auto;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
         }
 
         .hundreds-box {
@@ -248,8 +258,18 @@
 
         /* === Number Display === */
         .number-hero {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
             text-align: center;
             margin-bottom: 15px;
+        }
+
+        .number-entry {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .number-label {
@@ -744,7 +764,13 @@
 
             /* Number Input */
             .number-hero {
+                align-items: flex-end;
+                gap: 12px;
                 margin-bottom: 10px;
+            }
+
+            .memory-unit {
+                width: 96px;
             }
 
             .number-label {
@@ -865,6 +891,10 @@
                 width: 150px;
             }
 
+            .memory-unit {
+                width: 86px;
+            }
+
             .calc-inputs {
                 gap: 8px;
                 margin-bottom: 8px;
@@ -907,14 +937,6 @@
 
         <div class="card" id="display">
             <div class="main-display">
-                <!-- หลักร้อย -->
-                <div class="unit-card is-hidden" id="hundredsUnit" aria-hidden="true">
-                    <div class="hand-title">ทดในใจ<br>หลักร้อย</div>
-                    <div class="hundreds-box" id="hundredsBox">
-                        <div class="hundreds-value" id="hundredsDisplay">0</div>
-                    </div>
-                </div>
-
                 <!-- หลักสิบ -->
                 <div class="unit-card hand-unit">
                     <div class="hand-title">มือซ้าย<br>หลักสิบ</div>
@@ -933,8 +955,16 @@
             </div>
 
             <div class="number-hero" id="input">
-                <div class="number-label">ระบุจำนวนที่ต้องการ (0-999)</div>
-                <input type="number" id="numberInput" class="number-input" min="0" max="999" value="0" onclick="this.select()" onfocus="this.value=''" onchange="onInputChange()" onkeyup="onInputChange()">
+                <div class="memory-unit is-hidden" id="hundredsUnit" aria-hidden="true">
+                    <div class="hand-title">ทดในใจ<br>หลักร้อย</div>
+                    <div class="hundreds-box" id="hundredsBox">
+                        <div class="hundreds-value" id="hundredsDisplay">0</div>
+                    </div>
+                </div>
+                <div class="number-entry">
+                    <div class="number-label">ระบุจำนวนที่ต้องการ (0-999)</div>
+                    <input type="number" id="numberInput" class="number-input" min="0" max="999" value="0" onclick="this.select()" onfocus="this.value=''" onchange="onInputChange()" onkeyup="onInputChange()">
+                </div>
             </div>
 
             <div class="calc-inputs" id="calculate">
