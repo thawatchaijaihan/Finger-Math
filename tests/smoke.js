@@ -72,7 +72,16 @@ function expectCondition(condition, label) {
   await page.waitForTimeout(50);
   expectEqual(await page.locator('#numberInput').inputValue(), '999', 'addition clamps at 999');
 
+  await page.setViewportSize({ width: 1000, height: 900 });
   await page.locator('#lesson10').scrollIntoViewIfNeeded();
+  const lesson10ColumnCount = await page.evaluate(() =>
+    getComputedStyle(document.querySelector('#lesson10 .lesson-example'))
+      .gridTemplateColumns
+      .split(' ')
+      .filter(Boolean)
+      .length
+  );
+  expectEqual(lesson10ColumnCount, 2, 'lesson 10 example columns');
   await page.locator('button').filter({ hasText: 'แสดงตัวอย่าง' }).nth(4).click();
   await page.waitForTimeout(50);
 
