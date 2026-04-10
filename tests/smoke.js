@@ -87,6 +87,16 @@ function expectCondition(condition, label) {
     const problem = await page.evaluate(problemType => window.newPracticeProblem(problemType), type);
     const unitA = problem.a % 10;
     const unitB = problem.b % 10;
+    const selectedButton = await page.evaluate(problemType => {
+      const buttons = Array.from(document.querySelectorAll('[data-practice-type]'));
+      const active = buttons.filter(button => button.classList.contains('is-selected'));
+      return {
+        activeTypes: active.map(button => button.dataset.practiceType),
+        pressed: buttons.map(button => [button.dataset.practiceType, button.getAttribute('aria-pressed')]),
+      };
+    }, type);
+    expectEqual(JSON.stringify(selectedButton.activeTypes), JSON.stringify([type]), `${type} selected button`);
+    expectCondition(selectedButton.pressed.every(([buttonType, value]) => value === (buttonType === type ? 'true' : 'false')), `${type} aria pressed`);
 
     if (type === 'add-no-carry') {
       expectCondition(problem.operator === '+' && unitA + unitB <= 9, 'addition without carry');
