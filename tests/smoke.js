@@ -41,7 +41,7 @@ function expectCondition(condition, label) {
     })),
     background: getComputedStyle(document.querySelector('#hundredsBox')).backgroundImage,
   }));
-  expectEqual(initial.steps, true, 'steps panel exists');
+  expectEqual(initial.steps, false, 'steps panel is removed');
   expectEqual(initial.practice, true, 'practice section exists');
   expectEqual(JSON.stringify(initial.navLinks.slice(0, 3)), JSON.stringify([
     { text: 'การนับเลข', href: '#display' },
