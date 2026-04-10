@@ -134,6 +134,11 @@
             box-shadow: none;
         }
 
+        .hand-unit {
+            flex: 1 1 240px;
+            min-width: 180px;
+        }
+
         .unit-card.is-hidden {
             display: none;
         }
@@ -173,7 +178,7 @@
             transition: all 0.3s ease;
             width: 100%;
             min-width: 120px;
-            max-width: 140px;
+            max-width: 240px;
         }
 
         .hundreds-box .hundreds-value {
@@ -694,10 +699,16 @@
 
             .unit-card {
                 flex: 1;
-                max-width: 120px;
+                max-width: 180px;
                 padding: 5px;
                 min-width: unset;
                 min-height: 150px;
+            }
+
+            .hand-unit {
+                flex-basis: 0;
+                min-width: 0;
+                max-width: 180px;
             }
 
             .hundreds-box {
@@ -835,7 +846,7 @@
             }
 
             .unit-card {
-                max-width: 110px;
+                max-width: 150px;
                 padding: 5px;
                 min-height: 130px;
             }
@@ -905,7 +916,7 @@
                 </div>
 
                 <!-- หลักสิบ -->
-                <div class="unit-card">
+                <div class="unit-card hand-unit">
                     <div class="hand-title">มือซ้าย<br>หลักสิบ</div>
                     <div class="hand-display">
                         <img src="images/left/0.png" alt="มือซ้าย" class="hand-image" id="leftHandImage">
@@ -913,7 +924,7 @@
                 </div>
 
                 <!-- หลักหน่วย -->
-                <div class="unit-card">
+                <div class="unit-card hand-unit">
                     <div class="hand-title">มือขวา<br>หลักหน่วย</div>
                     <div class="hand-display">
                         <img src="images/right/0.png" alt="มือขวา" class="hand-image" id="rightHandImage">
