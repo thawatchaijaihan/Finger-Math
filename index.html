@@ -134,6 +134,10 @@
             box-shadow: none;
         }
 
+        .unit-card.is-hidden {
+            display: none;
+        }
+
         .hundreds-box {
             background: #fff7ed;
             border: 4px solid #fb7185;
@@ -893,7 +897,7 @@
         <div class="card" id="display">
             <div class="main-display">
                 <!-- หลักร้อย -->
-                <div class="unit-card">
+                <div class="unit-card is-hidden" id="hundredsUnit" aria-hidden="true">
                     <div class="hand-title">ทดในใจ<br>หลักร้อย</div>
                     <div class="hundreds-box" id="hundredsBox">
                         <div class="hundreds-value" id="hundredsDisplay">0</div>
@@ -1167,6 +1171,10 @@
             const tens = Math.floor((number % 100) / 10);
             const units = number % 10;
 
+            const hundredsUnit = document.getElementById('hundredsUnit');
+            const showHundreds = number > 99;
+            hundredsUnit.classList.toggle('is-hidden', !showHundreds);
+            hundredsUnit.setAttribute('aria-hidden', showHundreds ? 'false' : 'true');
             document.getElementById('hundredsDisplay').textContent = hundreds * 100;
 
             updateHand('leftHand', tens);

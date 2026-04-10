@@ -43,11 +43,13 @@ function expectCondition(condition, label) {
       document.querySelector('#lesson10').compareDocumentPosition(document.querySelector('#practice')) &
       Node.DOCUMENT_POSITION_FOLLOWING
     ),
+    hundredsHidden: getComputedStyle(document.querySelector('#hundredsUnit')).display === 'none',
     background: getComputedStyle(document.querySelector('#hundredsBox')).backgroundImage,
   }));
   expectEqual(initial.steps, false, 'steps panel is removed');
   expectEqual(initial.practice, true, 'practice section exists');
   expectEqual(initial.practiceAfterLesson10, true, 'practice follows lesson 10');
+  expectEqual(initial.hundredsHidden, true, 'hundreds starts hidden');
   expectEqual(JSON.stringify(initial.navLinks.slice(0, 3)), JSON.stringify([
     { text: 'การนับเลข', href: '#display' },
     { text: 'เทคนิค', href: '#lesson5' },
@@ -71,13 +73,25 @@ function expectCondition(condition, label) {
   const after27 = await page.evaluate(() => ({
     number: document.querySelector('#numberInput').value,
     hundreds: document.querySelector('#hundredsDisplay').textContent,
+    hundredsHidden: getComputedStyle(document.querySelector('#hundredsUnit')).display === 'none',
     left: document.querySelector('#leftHandImage').getAttribute('src'),
     right: document.querySelector('#rightHandImage').getAttribute('src'),
   }));
   expectEqual(after27.number, '27', 'number input');
   expectEqual(after27.hundreds, '0', 'hundreds display');
+  expectEqual(after27.hundredsHidden, true, 'hundreds stays hidden under 100');
   expectEqual(after27.left, 'images/left/20.png', 'left hand');
   expectEqual(after27.right, 'images/right/7.png', 'right hand');
+
+  await page.locator('#numberInput').fill('123');
+  await page.locator('#numberInput').press('Tab');
+  await page.waitForTimeout(50);
+  const after123 = await page.evaluate(() => ({
+    hundreds: document.querySelector('#hundredsDisplay').textContent,
+    hundredsHidden: getComputedStyle(document.querySelector('#hundredsUnit')).display === 'none',
+  }));
+  expectEqual(after123.hundreds, '100', 'hundreds display over 99');
+  expectEqual(after123.hundredsHidden, false, 'hundreds appears over 99');
 
   await page.locator('#numberInput').fill('999');
   await page.locator('#numberInput').press('Tab');
