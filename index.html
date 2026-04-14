@@ -1223,6 +1223,13 @@
             isCounting = false;
             stopSpeaking();
             resetAnimationButtons();
+
+            // Reset reveal button if it was hidden
+            const revealBtn = document.getElementById('revealBtn');
+            if (revealBtn) {
+                revealBtn.style.display = '';
+                revealBtn.innerHTML = '👆 เฉลย';
+            }
         }
 
         function resetAnimationButtons() {
@@ -1446,20 +1453,58 @@
                 newPracticeProblem(currentPracticeType);
             }
 
-            // Show answer in the question line (replace ? with answer)
-            document.getElementById('practiceQuestion').textContent =
-                `${currentPracticeProblem.a} ${currentPracticeProblem.operator} ${currentPracticeProblem.b} = ${currentPracticeProblem.result}`;
-            document.getElementById('practiceAnswer').textContent = '';
-            updateDisplay(currentPracticeProblem.result);
-            updateSteps(getPracticeSteps(currentPracticeProblem));
+            // Start animated reveal with finger counting
+            animatePracticeReveal(currentPracticeProblem);
+        }
 
-            // Hide reveal button after reveal
-            const revealBtn = document.getElementById('revealBtn');
-            if (revealBtn) {
-                revealBtn.style.display = 'none';
+        async function animatePracticeReveal(problem) {
+            if (isAnimating) return;
+            isAnimating = true;
+            const btn = document.getElementById('revealBtn');
+            if (btn) btn.innerHTML = '⏹️ หยุด';
+
+            const a = problem.a;
+            const b = problem.b;
+            const operator = problem.operator;
+            const result = problem.result;
+
+            // Step 1: Show first number (a)
+            updateDisplay(a);
+            speakNumber(a, true);
+            updateSteps([{ value: a, label: `ตัวตั้ง: ${a}` }]);
+            await sleep(1500);
+
+            if (!isAnimating) return;
+
+            // Step 2: Show operation with second number
+            const step = operator === '+' ? 1 : -1;
+            const end = operator === '+' ? a + b : a - b;
+
+            updateSteps([{ value: a, label: `${a} ${operator} ${b}` }]);
+            await sleep(800);
+
+            if (!isAnimating) return;
+
+            // Step 3: Animate counting
+            for (let i = a + step; operator === '+' ? i <= end : i >= end; i += step) {
+                if (!isAnimating) break;
+                updateDisplay(i);
+                speakNumber(i, true);
+                updateSteps([{ value: i, label: `นับ: ${i}` }]);
+                await sleep(2000);
             }
 
-            return currentPracticeProblem;
+            if (!isAnimating) return;
+
+            // Final: Show complete answer
+            document.getElementById('practiceQuestion').textContent =
+                `${a} ${operator} ${b} = ${result}`;
+            document.getElementById('practiceAnswer').textContent = '';
+            updateSteps(getPracticeSteps(problem));
+
+            if (btn) btn.style.display = 'none';
+
+            isAnimating = false;
         }
 
         function openContactPopup() {
