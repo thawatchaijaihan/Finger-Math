@@ -1210,7 +1210,7 @@
         // Preload all audio files
         const audioFiles = [
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 20, 21, 30, 31, 40, 41, 50, 51, 60, 61, 70, 71, 80, 81, 90, 91, 100,
-            'บวก', 'ลบ', 'หลักร้อย', 'หลักสิบ', 'หลักหน่วย'
+            'plus', 'minus', 'hundreds', 'tens', 'units'
         ];
         audioPool.preload(audioFiles);
 
@@ -1297,22 +1297,22 @@
 
         async function speakProblem(a, operator, b) {
             if (!soundEnabled) return;
-            const opFile = operator === '+' ? 'บวก' : 'ลบ';
+            const opFile = operator === '+' ? 'plus' : 'minus';
             const files = [...getAudioFilesForNumber(a), opFile, ...getAudioFilesForNumber(b)];
             await audioPool.playSequence(files, 50);
         }
 
         async function speakUnitsProblem(unitsA, operator, unitsB) {
             if (!soundEnabled) return;
-            const opFile = operator === '+' ? 'บวก' : 'ลบ';
-            const files = ['หลักหน่วย', ...getAudioFilesForNumber(unitsA), opFile, ...getAudioFilesForNumber(unitsB)];
+            const opFile = operator === '+' ? 'plus' : 'minus';
+            const files = ['units', ...getAudioFilesForNumber(unitsA), opFile, ...getAudioFilesForNumber(unitsB)];
             await audioPool.playSequence(files, 50);
         }
 
         async function speakTensProblem(tens, operator, tensB) {
             if (!soundEnabled) return;
-            const opFile = operator === '+' ? 'บวก' : 'ลบ';
-            const files = ['หลักสิบ', ...getAudioFilesForNumber(tens), opFile, ...getAudioFilesForNumber(tensB)];
+            const opFile = operator === '+' ? 'plus' : 'minus';
+            const files = ['tens', ...getAudioFilesForNumber(tens), opFile, ...getAudioFilesForNumber(tensB)];
             await audioPool.playSequence(files, 50);
         }
 
@@ -1355,7 +1355,7 @@
             let sequence = [];
             let n = Math.floor(Math.abs(num));
             
-            if (num < 0) sequence.push('ลบ');
+            if (num < 0) sequence.push('minus');
             
             if (n >= 100) {
                 const hundreds = Math.floor(n / 100);
@@ -1363,7 +1363,7 @@
                     sequence.push('100'); // "หนึ่งร้อย"
                 } else {
                     sequence.push(hundreds.toString());
-                    sequence.push('หลักร้อย'); // "ร้อย"
+                    sequence.push('hundreds'); // "ร้อย"
                 }
                 n %= 100;
             }
