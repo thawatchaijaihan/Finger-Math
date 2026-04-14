@@ -1080,6 +1080,10 @@
                     <div class="practice-badge" id="practiceType">เลือกแบบโจทย์</div>
                     <div class="practice-question" id="practiceQuestion">กดเลือกโจทย์เพื่อเริ่ม</div>
                     <div class="practice-hint" id="practiceHint">มือด้านบนจะแสดงตัวตั้งของโจทย์</div>
+                    <div class="practice-hands" id="practiceHandsDisplay" style="display:flex; justify-content:center; gap:20px; margin:10px 0;">
+                        <img id="practiceLeftHand" src="images/left/0.png" alt="มือซ้าย" style="height:100px; object-fit:contain;">
+                        <img id="practiceRightHand" src="images/right/0.png" alt="มือขวา" style="height:100px; object-fit:contain;">
+                    </div>
                     <div class="practice-answer" id="practiceAnswer"></div>
                     <div class="practice-actions">
                         <button class="btn btn-add" onclick="revealPracticeAnswer()" id="revealBtn">👆 เฉลย</button>
@@ -1428,13 +1432,19 @@
             document.getElementById('practiceHint').textContent = getPracticeHint(currentPracticeProblem);
             document.getElementById('practiceAnswer').textContent = '';
 
+            // Show practice hands display and update with first number
+            const handsDisplay = document.getElementById('practiceHandsDisplay');
+            if (handsDisplay) handsDisplay.style.display = 'flex';
+            updatePracticeHands(currentPracticeProblem.a);
+            updateDisplay(currentPracticeProblem.a);
+
             // Show reveal button again
             const revealBtn = document.getElementById('revealBtn');
             if (revealBtn) {
                 revealBtn.style.display = '';
+                revealBtn.innerHTML = '👆 เฉลย';
             }
 
-            updateDisplay(currentPracticeProblem.a);
             updateSteps([
                 { value: currentPracticeProblem.a, label: `แสดงตัวตั้ง: ${currentPracticeProblem.a}` },
                 { value: currentPracticeProblem.b, label: `ลองคิด: ${currentPracticeProblem.a} ${currentPracticeProblem.operator} ${currentPracticeProblem.b}` }
@@ -1468,7 +1478,8 @@
             const operator = problem.operator;
             const result = problem.result;
 
-            // Step 1: Show first number (a)
+            // Step 1: Show first number (a) on practice hands
+            updatePracticeHands(a);
             updateDisplay(a);
             speakNumber(a, true);
             updateSteps([{ value: a, label: `ตัวตั้ง: ${a}` }]);
@@ -1485,9 +1496,10 @@
 
             if (!isAnimating) return;
 
-            // Step 3: Animate counting
+            // Step 3: Animate counting on practice hands
             for (let i = a + step; operator === '+' ? i <= end : i >= end; i += step) {
                 if (!isAnimating) break;
+                updatePracticeHands(i);
                 updateDisplay(i);
                 speakNumber(i, true);
                 updateSteps([{ value: i, label: `นับ: ${i}` }]);
@@ -1505,6 +1517,15 @@
             if (btn) btn.style.display = 'none';
 
             isAnimating = false;
+        }
+
+        function updatePracticeHands(num) {
+            const leftImg = document.getElementById('practiceLeftHand');
+            const rightImg = document.getElementById('practiceRightHand');
+            const tens = Math.floor((num % 100) / 10);
+            const units = num % 10;
+            if (leftImg) leftImg.src = `images/left/${tens * 10}.png`;
+            if (rightImg) rightImg.src = `images/right/${units}.png`;
         }
 
         function openContactPopup() {
