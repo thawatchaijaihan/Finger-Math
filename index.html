@@ -1442,7 +1442,7 @@
             const tensB = Math.floor(problem.b / 10);
             const unitsB = problem.b % 10;
 
-            document.getElementById('practiceType').textContent = practiceLabels[type];
+            document.getElementById('practiceType').textContent = `${practiceLabels[type]} ${problem.a} ${problem.operator} ${problem.b} = ?`;
             document.getElementById('practiceQuestion').textContent = getPracticeHint(problem);
             document.getElementById('practiceAnswer').textContent = '';
 
