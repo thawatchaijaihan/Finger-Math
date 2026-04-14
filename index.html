@@ -974,8 +974,8 @@
                 </div>
             </div>
             <div class="action-buttons" id="actions">
-                <button class="btn btn-action" onclick="countTo99()">👆 นับนิ้ว</button>
-                <button class="btn btn-action" onclick="randomPractice()">🎲 สุ่มจำนวน</button>
+                <button class="btn btn-action" id="countBtn" onclick="countTo99()">👆 นับนิ้ว</button>
+                <button class="btn btn-action" id="practiceBtn" onclick="randomPractice()">🎲 สุ่มจำนวน</button>
                 <button class="btn btn-clear" onclick="clearAll()">🗑️ ล้าง</button>
                 <button class="btn btn-action" id="soundToggle" onclick="toggleSound()">🔊 ปิดเสียง</button>
             </div>
@@ -991,28 +991,28 @@
                             <img id="counting-hand-1" src="images/right/2.png" alt="มือขวา นับเลข">
                         </div>
                         <p>2 + 3 = 5</p>
-                        <button class="btn btn-action" onclick="startCounting(1, [2,3,4,5])">แสดงตัวอย่าง</button>
+                        <button class="btn btn-action example-btn" id="example-btn-1" onclick="toggleExample(this, 1, [2,3,4,5])">แสดงตัวอย่าง</button>
                     </figure>
                     <figure>
                         <div class="example-hands">
                             <img id="counting-hand-2" src="images/right/4.png" alt="มือขวา นับเลข">
                         </div>
                         <p>4 + 1 = 5</p>
-                        <button class="btn btn-action" onclick="startCounting(2, [4,5])">แสดงตัวอย่าง</button>
+                        <button class="btn btn-action example-btn" id="example-btn-2" onclick="toggleExample(this, 2, [4,5])">แสดงตัวอย่าง</button>
                     </figure>
                     <figure>
                         <div class="example-hands">
                             <img id="counting-hand-3" src="images/right/3.png" alt="มือขวา นับเลข">
                         </div>
                         <p>3 + 2 = 5</p>
-                        <button class="btn btn-action" onclick="startCounting(3, [3,4,5])">แสดงตัวอย่าง</button>
+                        <button class="btn btn-action example-btn" id="example-btn-3" onclick="toggleExample(this, 3, [3,4,5])">แสดงตัวอย่าง</button>
                     </figure>
                     <figure>
                         <div class="example-hands">
                             <img id="counting-hand-4" src="images/right/1.png" alt="มือขวา นับเลข">
                         </div>
                         <p>1 + 4 = 5</p>
-                        <button class="btn btn-action" onclick="startCounting(4, [1,2,3,4,5])">แสดงตัวอย่าง</button>
+                        <button class="btn btn-action example-btn" id="example-btn-4" onclick="toggleExample(this, 4, [1,2,3,4,5])">แสดงตัวอย่าง</button>
                     </figure>
                 </div>
 
@@ -1029,7 +1029,7 @@
                             <img id="counting-hand-10-right" src="images/right/1.png" alt="มือขวา นับเลข">
                         </div>
                         <p>1 + 9 = 10</p>
-                        <button class="btn btn-action" onclick="startCountingSub(10, 'both', [1,2,3,4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
+                        <button class="btn btn-action example-btn" id="example-btn-10" onclick="toggleExampleSub(this, 10, 'both', [1,2,3,4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
                     </figure>
                     <figure>
                         <div class="example-hands">
@@ -1037,7 +1037,7 @@
                             <img id="counting-hand-11-right" src="images/right/2.png" alt="มือขวา นับเลข">
                         </div>
                         <p>2 + 8 = 10</p>
-                        <button class="btn btn-action" onclick="startCountingSub(11, 'both', [2,3,4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
+                        <button class="btn btn-action example-btn" id="example-btn-11" onclick="toggleExampleSub(this, 11, 'both', [2,3,4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
                     </figure>
                     <figure>
                         <div class="example-hands">
@@ -1045,7 +1045,7 @@
                             <img id="counting-hand-12-right" src="images/right/3.png" alt="มือขวา นับเลข">
                         </div>
                         <p>3 + 7 = 10</p>
-                        <button class="btn btn-action" onclick="startCountingSub(12, 'both', [3,4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
+                        <button class="btn btn-action example-btn" id="example-btn-12" onclick="toggleExampleSub(this, 12, 'both', [3,4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
                     </figure>
                     <figure>
                         <div class="example-hands">
@@ -1053,7 +1053,7 @@
                             <img id="counting-hand-16-right" src="images/right/4.png" alt="มือขวา นับเลข">
                         </div>
                         <p>4 + 6 = 10</p>
-                        <button class="btn btn-action" onclick="startCountingSub(16, 'both', [4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
+                        <button class="btn btn-action example-btn" id="example-btn-16" onclick="toggleExampleSub(this, 16, 'both', [4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
                     </figure>
                     <figure>
                         <div class="example-hands">
@@ -1061,7 +1061,7 @@
                             <img id="counting-hand-17-right" src="images/right/5.png" alt="มือขวา นับเลข">
                         </div>
                         <p>5 + 5 = 10</p>
-                        <button class="btn btn-action" onclick="startCountingSub(17, 'both', [5,6,7,8,9,10])">แสดงตัวอย่าง</button>
+                        <button class="btn btn-action example-btn" id="example-btn-17" onclick="toggleExampleSub(this, 17, 'both', [5,6,7,8,9,10])">แสดงตัวอย่าง</button>
                     </figure>
                 </div>
 
@@ -1113,6 +1113,8 @@
         let soundEnabled = true;
         let speechSynth = window.speechSynthesis;
         let lastSpokenNumber = -1;
+        let currentAnimationType = null; // 'count', 'practice', 'example', 'examplesub'
+        let currentAnimationBtn = null;
 
         const practiceLabels = {
             'add-no-carry': 'บวก: ไม่ทด',
@@ -1213,6 +1215,29 @@
             if (!soundEnabled) {
                 stopSpeaking();
             }
+        }
+
+        function stopCurrentAnimation() {
+            if (!isAnimating) return;
+            isAnimating = false;
+            isCounting = false;
+            stopSpeaking();
+            resetAnimationButtons();
+        }
+
+        function resetAnimationButtons() {
+            // Reset main buttons
+            const countBtn = document.getElementById('countBtn');
+            if (countBtn) countBtn.innerHTML = '👆 นับนิ้ว';
+            const practiceBtn = document.getElementById('practiceBtn');
+            if (practiceBtn) practiceBtn.innerHTML = '🎲 สุ่มจำนวน';
+
+            // Reset example buttons
+            document.querySelectorAll('.example-btn').forEach(btn => {
+                btn.innerHTML = 'แสดงตัวอย่าง';
+            });
+            currentAnimationType = null;
+            currentAnimationBtn = null;
         }
 
         function makePracticeProblem(type) {
@@ -1465,7 +1490,11 @@
         }
 
         async function randomPractice() {
-            if (isAnimating) return;
+            const btn = document.getElementById('practiceBtn');
+            if (isAnimating) {
+                stopCurrentAnimation();
+                return;
+            }
             isCounting = false;
 
             const ops = ['add', 'subtract'];
@@ -1485,16 +1514,23 @@
         }
 
         async function countTo99() {
-            if (isAnimating) return;
+            const btn = document.getElementById('countBtn');
+            if (isAnimating) {
+                stopCurrentAnimation();
+                return;
+            }
             isAnimating = true;
             isCounting = true;
+            currentAnimationType = 'count';
+            currentAnimationBtn = btn;
+            if (btn) btn.innerHTML = '⏹️ หยุด';
             updateSteps([{ value: 0, label: 'เริ่มนับ: 0' }]);
             updateDisplay(0);
             speakNumber(0, true);
             await sleep(800);
 
             for (let i = 1; i <= 99; i++) {
-                if (!isCounting) break;
+                if (!isAnimating) break;
                 updateDisplay(i);
                 speakNumber(i, true);
                 updateSteps([{ value: i, label: `นับ: ${i}` }]);
@@ -1503,6 +1539,7 @@
 
             isAnimating = false;
             isCounting = false;
+            if (btn) btn.innerHTML = '👆 นับนิ้ว';
         }
 
         // Initialize
@@ -1519,29 +1556,56 @@
             input.addEventListener('wheel', e => e.preventDefault());
         });
 
-        async function startCounting(exampleId, sequence) {
+        function toggleExample(btn, exampleId, sequence) {
+            if (isAnimating && currentAnimationType === 'example') {
+                stopCurrentAnimation();
+                return;
+            }
+            startCounting(btn, exampleId, sequence);
+        }
+
+        function toggleExampleSub(btn, exampleId, handType, sequence) {
+            if (isAnimating && currentAnimationType === 'examplesub') {
+                stopCurrentAnimation();
+                return;
+            }
+            startCountingSub(btn, exampleId, handType, sequence);
+        }
+
+        async function startCounting(btn, exampleId, sequence) {
             if (isAnimating) return;
             isAnimating = true;
+            currentAnimationType = 'example';
+            currentAnimationBtn = btn;
+            if (btn) btn.innerHTML = '⏹️ หยุด';
 
             const img = document.getElementById(`counting-hand-${exampleId}`);
             if (!img) {
                 isAnimating = false;
+                currentAnimationType = null;
+                if (btn) btn.innerHTML = 'แสดงตัวอย่าง';
                 return;
             }
 
             // Show each number in sequence with animation
             for (let i = 0; i < sequence.length; i++) {
+                if (!isAnimating) break;
                 img.src = `images/right/${sequence[i]}.png`;
                 speakNumber(sequence[i], true);
                 await sleep(1500); // 1.5 seconds per number
             }
 
             isAnimating = false;
+            currentAnimationType = null;
+            if (btn) btn.innerHTML = 'แสดงตัวอย่าง';
         }
 
-        async function startCountingSub(exampleId, handType, sequence) {
+        async function startCountingSub(btn, exampleId, handType, sequence) {
             if (isAnimating) return;
             isAnimating = true;
+            currentAnimationType = 'examplesub';
+            currentAnimationBtn = btn;
+            if (btn) btn.innerHTML = '⏹️ หยุด';
 
             let imgRight, imgLeft;
             if (handType === 'both') {
@@ -1553,10 +1617,13 @@
 
             if (!imgRight || (handType === 'both' && !imgLeft)) {
                 isAnimating = false;
+                currentAnimationType = null;
+                if (btn) btn.innerHTML = 'แสดงตัวอย่าง';
                 return;
             }
 
             for (let i = 0; i < sequence.length; i++) {
+                if (!isAnimating) break;
                 const num = sequence[i];
                 if (handType === 'both') {
                     const tens = Math.floor(num / 10);
@@ -1571,6 +1638,8 @@
             }
 
             isAnimating = false;
+            currentAnimationType = null;
+            if (btn) btn.innerHTML = 'แสดงตัวอย่าง';
         }
     </script>
 </body>
