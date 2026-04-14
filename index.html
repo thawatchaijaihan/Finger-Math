@@ -1131,7 +1131,7 @@
 
         // Thai number words
         const thaiNumbers = ['ศูนย์', 'หนึ่ง', 'สอง', 'สาม', 'สี่', 'ห้า', 'หก', 'เจ็ด', 'แปด', 'เก้า'];
-        const thai Tens = ['', 'สิบ', 'ยี่สิบ', 'สามสิบ', 'สี่สิบ', 'ห้าสิบ', 'หกสิบ', 'เจ็ดสิบ', 'แปดสิบ', 'เก้าสิบ'];
+        const thaiTens = ['', 'สิบ', 'ยี่สิบ', 'สามสิบ', 'สี่สิบ', 'ห้าสิบ', 'หกสิบ', 'เจ็ดสิบ', 'แปดสิบ', 'เก้าสิบ'];
 
         function numberToThai(num) {
             num = Math.floor(num);
@@ -1160,7 +1160,7 @@
                         result += 'สิบ' + thaiNumbers[remainder - 10];
                     }
                 } else if (remainder >= 20) {
-                    result += thai Tens[tens];
+                    result += thaiTens[tens];
                     if (units > 0) {
                         if (units === 1 && tens > 0) {
                             result += 'เอ็ด';
