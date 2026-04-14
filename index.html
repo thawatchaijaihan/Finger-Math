@@ -1229,7 +1229,7 @@
             if (!soundEnabled) return;
             speechSynth.cancel();
             const opText = operator === '+' ? 'บวก' : 'ลบ';
-            const utterance = new SpeechSynthesisUtterance(`${numberToThaiOnly(unitsA)} ${opText} ${numberToThaiOnly(unitsB)}`);
+            const utterance = new SpeechSynthesisUtterance(`หลักหน่วย ${numberToThaiOnly(unitsA)} ${opText} ${numberToThaiOnly(unitsB)}`);
             utterance.lang = 'th-TH';
             utterance.rate = 0.8;
             utterance.pitch = 1;
@@ -1244,7 +1244,7 @@
             if (!soundEnabled) return;
             speechSynth.cancel();
             const opText = operator === '+' ? 'บวก' : 'ลบ';
-            const utterance = new SpeechSynthesisUtterance(`${numberToThaiOnly(tens)} ${opText} ${numberToThaiOnly(tensB)}`);
+            const utterance = new SpeechSynthesisUtterance(`หลักสิบ ${numberToThaiOnly(tens)} ${opText} ${numberToThaiOnly(tensB)}`);
             utterance.lang = 'th-TH';
             utterance.rate = 0.8;
             utterance.pitch = 1;
