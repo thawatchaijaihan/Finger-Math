@@ -1082,7 +1082,7 @@
                     <div class="practice-hint" id="practiceHint">มือด้านบนจะแสดงตัวตั้งของโจทย์</div>
                     <div class="practice-answer" id="practiceAnswer"></div>
                     <div class="practice-actions">
-                        <button class="btn btn-add" onclick="revealPracticeAnswer()">เฉลย</button>
+                        <button class="btn btn-add" onclick="revealPracticeAnswer()" id="revealBtn">👆 เฉลย</button>
                         <button class="btn btn-clear" onclick="repeatPracticeProblem()">สุ่มอีกข้อ</button>
                     </div>
                 </div>
@@ -1421,6 +1421,12 @@
             document.getElementById('practiceHint').textContent = getPracticeHint(currentPracticeProblem);
             document.getElementById('practiceAnswer').textContent = '';
 
+            // Show reveal button again
+            const revealBtn = document.getElementById('revealBtn');
+            if (revealBtn) {
+                revealBtn.style.display = '';
+            }
+
             updateDisplay(currentPracticeProblem.a);
             updateSteps([
                 { value: currentPracticeProblem.a, label: `แสดงตัวตั้ง: ${currentPracticeProblem.a}` },
@@ -1440,10 +1446,18 @@
                 newPracticeProblem(currentPracticeType);
             }
 
-            document.getElementById('practiceAnswer').textContent =
-                `เฉลย: ${currentPracticeProblem.a} ${currentPracticeProblem.operator} ${currentPracticeProblem.b} = ${currentPracticeProblem.result}`;
+            // Show answer in the question line (replace ? with answer)
+            document.getElementById('practiceQuestion').textContent =
+                `${currentPracticeProblem.a} ${currentPracticeProblem.operator} ${currentPracticeProblem.b} = ${currentPracticeProblem.result}`;
+            document.getElementById('practiceAnswer').textContent = '';
             updateDisplay(currentPracticeProblem.result);
             updateSteps(getPracticeSteps(currentPracticeProblem));
+
+            // Hide reveal button after reveal
+            const revealBtn = document.getElementById('revealBtn');
+            if (revealBtn) {
+                revealBtn.style.display = 'none';
+            }
 
             return currentPracticeProblem;
         }
