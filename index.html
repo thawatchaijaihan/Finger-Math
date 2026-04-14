@@ -1216,7 +1216,7 @@
             const opText = operator === '+' ? 'บวก' : 'ลบ';
             const utterance = new SpeechSynthesisUtterance(`${numberToThaiOnly(a)} ${opText} ${numberToThaiOnly(b)}`);
             utterance.lang = 'th-TH';
-            utterance.rate = 0.8;
+            utterance.rate = 0.5;
             utterance.pitch = 1;
             utterance.volume = 1;
             const voices = speechSynth.getVoices();
@@ -1231,7 +1231,7 @@
             const opText = operator === '+' ? 'บวก' : 'ลบ';
             const utterance = new SpeechSynthesisUtterance(`หลักหน่วย ${numberToThaiOnly(unitsA)} ${opText} ${numberToThaiOnly(unitsB)}`);
             utterance.lang = 'th-TH';
-            utterance.rate = 0.8;
+            utterance.rate = 0.5;
             utterance.pitch = 1;
             utterance.volume = 1;
             const voices = speechSynth.getVoices();
@@ -1246,7 +1246,7 @@
             const opText = operator === '+' ? 'บวก' : 'ลบ';
             const utterance = new SpeechSynthesisUtterance(`หลักสิบ ${numberToThaiOnly(tens)} ${opText} ${numberToThaiOnly(tensB)}`);
             utterance.lang = 'th-TH';
-            utterance.rate = 0.8;
+            utterance.rate = 0.5;
             utterance.pitch = 1;
             utterance.volume = 1;
             const voices = speechSynth.getVoices();
@@ -1260,7 +1260,7 @@
             speechSynth.cancel();
             const utterance = new SpeechSynthesisUtterance(`ตอบ ${numberToThai(result)}`);
             utterance.lang = 'th-TH';
-            utterance.rate = 0.8;
+            utterance.rate = 0.5;
             utterance.pitch = 1;
             utterance.volume = 1;
             const voices = speechSynth.getVoices();
@@ -1274,7 +1274,7 @@
             speechSynth.cancel();
             const utterance = new SpeechSynthesisUtterance(numberToThai(count));
             utterance.lang = 'th-TH';
-            utterance.rate = 0.9;
+            utterance.rate = 0.6;
             utterance.pitch = 1;
             utterance.volume = 1;
             const voices = speechSynth.getVoices();
@@ -1293,7 +1293,7 @@
             speechSynth.cancel();
             const utterance = new SpeechSynthesisUtterance(numberToThai(num));
             utterance.lang = 'th-TH';
-            utterance.rate = 0.9;
+            utterance.rate = 0.6;
             utterance.pitch = 1;
             utterance.volume = 1;
 
