@@ -853,10 +853,6 @@
             line-height: 1.5;
         }
 
-        .modal-content ul {
-            padding-left: 18px;
-        }
-            }
         }
 
         /* Very small screens */
@@ -1213,7 +1209,7 @@
 
         // Preload all audio files
         const audioFiles = [
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 20, 21, 30, 31, 40, 41, 50, 51, 60, 61, 70, 71, 80, 81, 90, 91, 100,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 20, 21, 30, 31, 40, 41, 50, 51, 60, 61, 70, 71, 80, 81, 90, 91, 100,
             'บวก', 'ลบ', 'หลักร้อย', 'หลักสิบ', 'หลักหน่วย'
         ];
         audioPool.preload(audioFiles);
@@ -1299,78 +1295,59 @@
             return result;
         }
 
-        function speakProblem(a, operator, b) {
+        async function speakProblem(a, operator, b) {
             if (!soundEnabled) return;
-            speechSynth.cancel();
-            const opText = operator === '+' ? 'บวก' : 'ลบ';
-            const utterance = new SpeechSynthesisUtterance(`${numberToThaiOnly(a)} ${opText} ${numberToThaiOnly(b)}`);
-            utterance.lang = 'th-TH';
-            utterance.rate = 0.5;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-            const voices = speechSynth.getVoices();
-            const thaiVoice = voices.find(v => v.lang.includes('th'));
-            if (thaiVoice) utterance.voice = thaiVoice;
-            speechSynth.speak(utterance);
+            const opFile = operator === '+' ? 'บวก' : 'ลบ';
+            const files = [...getAudioFilesForNumber(a), opFile, ...getAudioFilesForNumber(b)];
+            await audioPool.playSequence(files, 50);
         }
 
-        function speakUnitsProblem(unitsA, operator, unitsB) {
+        async function speakUnitsProblem(unitsA, operator, unitsB) {
             if (!soundEnabled) return;
-            speechSynth.cancel();
-            const opText = operator === '+' ? 'บวก' : 'ลบ';
-            const utterance = new SpeechSynthesisUtterance(`หลักหน่วย ${numberToThaiOnly(unitsA)} ${opText} ${numberToThaiOnly(unitsB)}`);
-            utterance.lang = 'th-TH';
-            utterance.rate = 0.5;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-            const voices = speechSynth.getVoices();
-            const thaiVoice = voices.find(v => v.lang.includes('th'));
-            if (thaiVoice) utterance.voice = thaiVoice;
-            speechSynth.speak(utterance);
+            const opFile = operator === '+' ? 'บวก' : 'ลบ';
+            const files = ['หลักหน่วย', ...getAudioFilesForNumber(unitsA), opFile, ...getAudioFilesForNumber(unitsB)];
+            await audioPool.playSequence(files, 50);
         }
 
-        function speakTensProblem(tens, operator, tensB) {
+        async function speakTensProblem(tens, operator, tensB) {
             if (!soundEnabled) return;
-            speechSynth.cancel();
-            const opText = operator === '+' ? 'บวก' : 'ลบ';
-            const utterance = new SpeechSynthesisUtterance(`หลักสิบ ${numberToThaiOnly(tens)} ${opText} ${numberToThaiOnly(tensB)}`);
-            utterance.lang = 'th-TH';
-            utterance.rate = 0.5;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-            const voices = speechSynth.getVoices();
-            const thaiVoice = voices.find(v => v.lang.includes('th'));
-            if (thaiVoice) utterance.voice = thaiVoice;
-            speechSynth.speak(utterance);
+            const opFile = operator === '+' ? 'บวก' : 'ลบ';
+            const files = ['หลักสิบ', ...getAudioFilesForNumber(tens), opFile, ...getAudioFilesForNumber(tensB)];
+            await audioPool.playSequence(files, 50);
         }
 
-        function speakAnswer(result) {
+        async function speakAnswer(result) {
             if (!soundEnabled) return;
+            // Speak "ตอบ" using Web Speech as we don't have a file for it
             speechSynth.cancel();
-            const utterance = new SpeechSynthesisUtterance(`ตอบ ${numberToThai(result)}`);
+            const utterance = new SpeechSynthesisUtterance('ตอบ');
             utterance.lang = 'th-TH';
-            utterance.rate = 0.5;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-            const voices = speechSynth.getVoices();
-            const thaiVoice = voices.find(v => v.lang.includes('th'));
-            if (thaiVoice) utterance.voice = thaiVoice;
             speechSynth.speak(utterance);
+            
+            // Wait a bit for "ตอบ" to finish then play the number files
+            await new Promise(resolve => {
+                utterance.onend = resolve;
+                setTimeout(resolve, 800); // Fallback
+            });
+            
+            const files = getAudioFilesForNumber(result);
+            if (files.length > 0) {
+                await audioPool.playSequence(files, 50);
+            } else if (result === 0) {
+                await audioPool.play('0');
+            }
         }
 
-        function speakCount(count) {
+        async function speakCount(count) {
             if (!soundEnabled) return;
-            speechSynth.cancel();
-            const utterance = new SpeechSynthesisUtterance(numberToThai(count));
-            utterance.lang = 'th-TH';
-            utterance.rate = 0.6;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-            const voices = speechSynth.getVoices();
-            const thaiVoice = voices.find(v => v.lang.includes('th'));
-            if (thaiVoice) utterance.voice = thaiVoice;
-            speechSynth.speak(utterance);
+            const files = getAudioFilesForNumber(count);
+            if (files.length > 0) {
+                await audioPool.playSequence(files, 50);
+            } else if (count === 0) {
+                await audioPool.play('0');
+            }
         }
+
 
         function getAudioFilesForNumber(num) {
             if (num === 0) return []; // Skip zero or return ['0'] if file exists
@@ -1426,16 +1403,7 @@
             if (files.length > 0) {
                 await audioPool.playSequence(files, 50); // Small gap for natural flow
             } else if (num === 0) {
-                // Fallback for zero if needed, or play '0' if file exists
-                if (audioPool.pool['0']) {
-                    await audioPool.play('0');
-                } else {
-                    // Final fallback to speech API for zero
-                    speechSynth.cancel();
-                    const utterance = new SpeechSynthesisUtterance('ศูนย์');
-                    utterance.lang = 'th-TH';
-                    speechSynth.speak(utterance);
-                }
+                await audioPool.play('0');
             }
         }
 
