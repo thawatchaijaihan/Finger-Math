@@ -1133,6 +1133,7 @@
                 this.preloadQueue = [];
                 this.loadedCount = 0;
                 this.totalCount = 0;
+                this.currentSequenceId = 0;
             }
 
             getAudioPath(num) {
@@ -1166,6 +1167,10 @@
                     await new Promise(resolve => setTimeout(resolve, delay));
                 }
                 if (!soundEnabled) return;
+                
+                // Clear any existing sequences when playing a single sound (if needed)
+                // but usually speak* functions handle this.
+                
                 if (this.pool[filename]) {
                     const audio = this.pool[filename];
                     audio.currentTime = 0;
@@ -1173,17 +1178,29 @@
                 }
             }
 
-            async playSequence(filenames, gap = 300) {
+            async playSequence(filenames, gap = 50) {
+                const seqId = ++this.currentSequenceId;
+                
                 for (let i = 0; i < filenames.length; i++) {
-                    if (!soundEnabled) break;
+                    if (!soundEnabled || seqId !== this.currentSequenceId) break;
+                    
                     if (this.pool[filenames[i]]) {
                         const audio = this.pool[filenames[i]];
                         audio.currentTime = 0;
                         await audio.play();
+                        
                         if (i < filenames.length - 1) {
                             await new Promise(resolve => {
-                                audio.onended = () => setTimeout(resolve, gap);
-                                setTimeout(resolve, 1500); // fallback
+                                const timer = setTimeout(() => {
+                                    if (seqId === this.currentSequenceId) resolve();
+                                }, 1500); // fallback
+                                
+                                audio.onended = () => {
+                                    clearTimeout(timer);
+                                    setTimeout(() => {
+                                        if (seqId === this.currentSequenceId) resolve();
+                                    }, gap);
+                                };
                             });
                         }
                     }
@@ -1198,9 +1215,11 @@
             }
 
             stopAll() {
+                this.currentSequenceId++; // Invalidate current sequence
                 Object.values(this.pool).forEach(audio => {
                     audio.pause();
                     audio.currentTime = 0;
+                    audio.onended = null; // Clear callbacks
                 });
             }
         }
@@ -1297,6 +1316,7 @@
 
         async function speakProblem(a, operator, b) {
             if (!soundEnabled) return;
+            audioPool.stopAll();
             const opFile = operator === '+' ? 'plus' : 'minus';
             const files = [...getAudioFilesForNumber(a), opFile, ...getAudioFilesForNumber(b)];
             await audioPool.playSequence(files, 50);
@@ -1304,6 +1324,7 @@
 
         async function speakUnitsProblem(unitsA, operator, unitsB) {
             if (!soundEnabled) return;
+            audioPool.stopAll();
             const opFile = operator === '+' ? 'plus' : 'minus';
             const files = ['units', ...getAudioFilesForNumber(unitsA), opFile, ...getAudioFilesForNumber(unitsB)];
             await audioPool.playSequence(files, 50);
@@ -1311,6 +1332,7 @@
 
         async function speakTensProblem(tens, operator, tensB) {
             if (!soundEnabled) return;
+            audioPool.stopAll();
             const opFile = operator === '+' ? 'plus' : 'minus';
             const files = ['tens', ...getAudioFilesForNumber(tens), opFile, ...getAudioFilesForNumber(tensB)];
             await audioPool.playSequence(files, 50);
@@ -1318,6 +1340,7 @@
 
         async function speakAnswer(result) {
             if (!soundEnabled) return;
+            audioPool.stopAll();
             // Speak "ตอบ" using Web Speech as we don't have a file for it
             speechSynth.cancel();
             const utterance = new SpeechSynthesisUtterance('ตอบ');
@@ -1340,6 +1363,7 @@
 
         async function speakCount(count) {
             if (!soundEnabled) return;
+            audioPool.stopAll();
             const files = getAudioFilesForNumber(count);
             if (files.length > 0) {
                 await audioPool.playSequence(files, 50);
@@ -1394,10 +1418,8 @@
             if (num === lastSpokenNumber && !priority) return;
             lastSpokenNumber = num;
 
-            // Stop current speech if priority
-            if (priority) {
-                // We don't have a global "stop all" in AudioPool yet, but we can manage sequence playback
-            }
+            // Stop current speech
+            audioPool.stopAll();
 
             const files = getAudioFilesForNumber(num);
             if (files.length > 0) {
@@ -1409,6 +1431,7 @@
 
         function stopSpeaking() {
             speechSynth.cancel();
+            audioPool.stopAll();
             lastSpokenNumber = -1;
         }
 
