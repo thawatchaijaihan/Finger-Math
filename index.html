@@ -1477,28 +1477,38 @@
         }
 
         function makePracticeProblem(type) {
-            for (let attempt = 0; attempt < 1000; attempt++) {
-                const a = randomInt(10, 99);
-                const b = randomInt(1, type.startsWith('subtract') ? a : 99);
+            for (let attempt = 0; attempt < 2000; attempt++) {
+                const a = randomInt(11, 99);
+                const b = randomInt(1, type.startsWith('subtract') ? a - 1 : 99 - a);
                 const unitA = a % 10;
                 const unitB = b % 10;
+                const tensA = Math.floor(a / 10);
+                const tensB = Math.floor(b / 10);
                 const result = type.startsWith('add') ? a + b : a - b;
 
-                if (type === 'add-no-carry' && unitA + unitB <= 9 && result <= 99) {
-                    return { type, a, b, operator: '+', result };
-                }
-                if (type === 'add-carry' && unitA + unitB > 9 && result <= 99) {
-                    return { type, a, b, operator: '+', result };
-                }
-                if (type === 'subtract-no-borrow' && unitA >= unitB) {
-                    return { type, a, b, operator: '-', result };
-                }
-                if (type === 'subtract-borrow' && unitA < unitB) {
-                    return { type, a, b, operator: '-', result };
+                if (type === 'add-no-carry') {
+                    if (unitA + unitB <= 9 && tensA + tensB <= 9 && result <= 99) {
+                        return { type, a, b, operator: '+', result };
+                    }
+                } else if (type === 'add-carry') {
+                    if (unitA + unitB > 9 && result <= 99) {
+                        return { type, a, b, operator: '+', result };
+                    }
+                } else if (type === 'subtract-no-borrow') {
+                    if (unitA >= unitB && tensA >= tensB) {
+                        return { type, a, b, operator: '-', result };
+                    }
+                } else if (type === 'subtract-borrow') {
+                    if (unitA < unitB && result >= 0) {
+                        return { type, a, b, operator: '-', result };
+                    }
                 }
             }
 
-            return { type, a: 34, b: 12, operator: type.startsWith('add') ? '+' : '-', result: type.startsWith('add') ? 46 : 22 };
+            // Fallback that is at least somewhat random if for some reason the above fails
+            const fallbackA = 34;
+            const fallbackB = type.startsWith('add') ? 12 : 14;
+            return { type, a: fallbackA, b: fallbackB, operator: type.startsWith('add') ? '+' : '-', result: type.startsWith('add') ? fallbackA+fallbackB : fallbackA-fallbackB };
         }
 
         function getPracticeHint(problem) {
@@ -1814,34 +1824,45 @@
             if (!isAnimating) return;
 
             // Step 4: Tens - speak problem
-            const tensAfterCarry = currentTens;
-            const totalTensToAdd = tensB + carry;
-            const totalTensToSub = tensB - borrow;
+            const tensAfterUnits = currentTens;
+            const bTens = Math.floor(b / 10);
+            
+            if (bTens > 0 || (operator === '+' && carry > 0) || (operator === '-' && borrow > 0)) {
+                updateSteps([{ value: tensAfterUnits, label: `สิบ: ${tensAfterUnits} ${opText} ${bTens} ${carry > 0 ? '(รวมทด)' : (borrow > 0 ? '(รวมยืม)' : '')}` }]);
+                await speakTensProblem(tensAfterUnits, operator, bTens);
+                await sleep(2000);
 
-            if (operator === '+') {
-                updateSteps([{ value: tensAfterCarry, label: `สิบ: ${numberToThaiOnly(tensAfterCarry)} ${opText} ${numberToThaiOnly(tensB)} ${carry > 0 ? '(รวมทด)' : ''}` }]);
-                speakTensProblem(tensAfterCarry, operator, totalTensToAdd);
-            } else {
-                updateSteps([{ value: tensAfterCarry, label: `สิบ: ${numberToThaiOnly(tensAfterCarry)} ${opText} ${numberToThaiOnly(tensB)} ${borrow > 0 ? '(รวมยืม)' : ''}` }]);
-                speakTensProblem(tensAfterCarry, operator, totalTensToSub);
+                if (!isAnimating) return;
+
+                // Step 5: Add/subtract tens (left hand)
+                const tensStep = operator === '+' ? 1 : -1;
+                const tensEnd = operator === '+' ? tensAfterUnits + bTens : tensAfterUnits - bTens;
+                const tensStart = tensAfterUnits;
+
+                for (let i = tensStart + tensStep; operator === '+' ? i <= tensEnd : i >= tensEnd; i += tensStep) {
+                    if (!isAnimating) return;
+                    currentTens = i;
+                    updatePracticeHandsHandsOnly(currentTens, currentUnits);
+                    document.getElementById('practiceVerticalResult').textContent = currentTens * 10 + currentUnits;
+                    await speakNumber(currentTens * 10 + currentUnits, true);
+                    updateSteps([{ value: currentTens * 10 + currentUnits, label: `สิบ: ${i}` }]);
+                    await sleep(1500);
+                }
             }
-            await sleep(2000);
 
             if (!isAnimating) return;
 
-            // Step 5: Add/subtract tens (left hand)
-            const tensStep = operator === '+' ? 1 : -1;
-            const tensEnd = operator === '+' ? totalTensToAdd : totalTensToSub;
-            const tensStart = tensAfterCarry;
-
-            for (let i = tensStart + tensStep; operator === '+' ? i <= tensEnd : i >= tensEnd; i += tensStep) {
-                if (!isAnimating) return;
-                currentTens = i;
-                updatePracticeHandsHandsOnly(currentTens, currentUnits);
-                document.getElementById('practiceVerticalResult').textContent = currentTens * 10 + currentUnits;
-                speakNumber(currentTens * 10 + currentUnits, true);
-                updateSteps([{ value: currentTens * 10 + currentUnits, label: `สิบ: ${numberToThaiOnly(i)}` }]);
-                await sleep(1500);
+            // Step 6: Hundreds - if applicable
+            const bHundreds = Math.floor(b / 100);
+            if (bHundreds > 0 || (operator === '+' && currentTens >= 10)) {
+                // Simplified hundred logic: just update display if it changed
+                const finalHundreds = Math.floor(result / 100);
+                if (finalHundreds !== hundredsA) {
+                    audioPool.stopAll();
+                    await audioPool.playSequence(['hundreds'], 50);
+                    updateDisplay(result);
+                    await sleep(1500);
+                }
             }
 
             if (!isAnimating) return;
