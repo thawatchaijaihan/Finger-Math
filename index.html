@@ -977,7 +977,9 @@
                 <button class="btn btn-action" onclick="countTo99()">👆 นับนิ้ว</button>
                 <button class="btn btn-action" onclick="randomPractice()">🎲 สุ่มจำนวน</button>
                 <button class="btn btn-clear" onclick="clearAll()">🗑️ ล้าง</button>
+                <button class="btn btn-action" id="soundToggle" onclick="toggleSound()">🔊 ปิดเสียง</button>
             </div>
+            <div class="steps-panel" id="steps"></div>
 
             <div class="lesson-section" id="lesson5">
                 <h2>เลขผสม ห้า</h2>
@@ -1108,6 +1110,9 @@
         const MAX_NUMBER = 999;
         let currentPracticeType = 'add-no-carry';
         let currentPracticeProblem = null;
+        let soundEnabled = true;
+        let speechSynth = window.speechSynthesis;
+        let lastSpokenNumber = -1;
 
         const practiceLabels = {
             'add-no-carry': 'บวก: ไม่ทด',
@@ -1122,6 +1127,92 @@
 
         function randomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Thai number words
+        const thaiNumbers = ['ศูนย์', 'หนึ่ง', 'สอง', 'สาม', 'สี่', 'ห้า', 'หก', 'เจ็ด', 'แปด', 'เก้า'];
+        const thai Tens = ['', 'สิบ', 'ยี่สิบ', 'สามสิบ', 'สี่สิบ', 'ห้าสิบ', 'หกสิบ', 'เจ็ดสิบ', 'แปดสิบ', 'เก้าสิบ'];
+
+        function numberToThai(num) {
+            num = Math.floor(num);
+            if (num === 0) return 'ศูนย์';
+            if (num < 0) return 'ลบ ' + numberToThai(-num);
+
+            let result = '';
+            const hundreds = Math.floor(num / 100);
+            const remainder = num % 100;
+            const tens = Math.floor(remainder / 10);
+            const units = remainder % 10;
+
+            if (hundreds > 0) {
+                if (hundreds === 1) {
+                    result += 'หนึ่งร้อย';
+                } else {
+                    result += thaiNumbers[hundreds] + 'ร้อย';
+                }
+            }
+
+            if (remainder > 0) {
+                if (remainder >= 10 && remainder < 20) {
+                    if (remainder === 10) {
+                        result += 'สิบ';
+                    } else {
+                        result += 'สิบ' + thaiNumbers[remainder - 10];
+                    }
+                } else if (remainder >= 20) {
+                    result += thai Tens[tens];
+                    if (units > 0) {
+                        if (units === 1 && tens > 0) {
+                            result += 'เอ็ด';
+                        } else {
+                            result += thaiNumbers[units];
+                        }
+                    }
+                } else {
+                    result += thaiNumbers[units];
+                }
+            }
+
+            return result.trim();
+        }
+
+        function speakNumber(num, priority = false) {
+            if (!soundEnabled) return;
+            if (num === lastSpokenNumber && !priority) return;
+            lastSpokenNumber = num;
+
+            if (speechSynth.paused && !priority) return;
+
+            speechSynth.cancel();
+            const utterance = new SpeechSynthesisUtterance(numberToThai(num));
+            utterance.lang = 'th-TH';
+            utterance.rate = 0.9;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+
+            const voices = speechSynth.getVoices();
+            const thaiVoice = voices.find(v => v.lang.includes('th'));
+            if (thaiVoice) {
+                utterance.voice = thaiVoice;
+            }
+
+            speechSynth.speak(utterance);
+        }
+
+        function stopSpeaking() {
+            speechSynth.cancel();
+            lastSpokenNumber = -1;
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggle');
+            btn.textContent = soundEnabled ? '🔊 ปิดเสียง' : '🔇 เปิดเสียง';
+            btn.classList.toggle('btn-action', soundEnabled);
+            btn.classList.toggle('btn-clear', !soundEnabled);
+            if (!soundEnabled) {
+                stopSpeaking();
+            }
         }
 
         function makePracticeProblem(type) {
@@ -1364,6 +1455,7 @@
             const step = operation === 'add' ? 1 : -1;
             for (let i = start + step; operation === 'add' ? i <= end : i >= end; i += step) {
                 updateDisplay(i);
+                speakNumber(i, true);
                 await sleep(2000); // 2 วินาทีต่อจำนวน
             }
 
@@ -1398,11 +1490,13 @@
             isCounting = true;
             updateSteps([{ value: 0, label: 'เริ่มนับ: 0' }]);
             updateDisplay(0);
+            speakNumber(0, true);
             await sleep(800);
 
             for (let i = 1; i <= 99; i++) {
                 if (!isCounting) break;
                 updateDisplay(i);
+                speakNumber(i, true);
                 updateSteps([{ value: i, label: `นับ: ${i}` }]);
                 await sleep(2000);
             }
@@ -1414,6 +1508,11 @@
         // Initialize
         updateDisplay(0);
         updateSteps([{ value: 0, label: 'เริ่มต้น: 0' }]);
+
+        // Load voices for speech synthesis
+        if (speechSynth.onvoiceschanged !== undefined) {
+            speechSynth.onvoiceschanged = () => {};
+        }
 
         // Prevent scroll wheel from changing number inputs
         document.querySelectorAll('input[type="number"]').forEach(input => {
@@ -1433,6 +1532,7 @@
             // Show each number in sequence with animation
             for (let i = 0; i < sequence.length; i++) {
                 img.src = `images/right/${sequence[i]}.png`;
+                speakNumber(sequence[i], true);
                 await sleep(1500); // 1.5 seconds per number
             }
 
@@ -1466,6 +1566,7 @@
                 } else {
                     imgRight.src = `images/right/${num}.png`;
                 }
+                speakNumber(num, true);
                 await sleep(1500);
             }
 
