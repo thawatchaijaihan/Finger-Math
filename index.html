@@ -1078,12 +1078,18 @@
                 </div>
                 <div class="practice-board">
                     <div class="practice-badge" id="practiceType">เลือกแบบโจทย์</div>
-                    <div class="practice-question" id="practiceQuestion">กดเลือกโจทย์เพื่อเริ่ม</div>
-                    <div class="practice-hint" id="practiceHint">มือด้านบนจะแสดงตัวตั้งของโจทย์</div>
-                    <div class="practice-hands" id="practiceHandsDisplay" style="display:flex; justify-content:center; gap:20px; margin:10px 0;">
-                        <img id="practiceLeftHand" src="images/left/0.png" alt="มือซ้าย" style="height:100px; object-fit:contain;">
-                        <img id="practiceRightHand" src="images/right/0.png" alt="มือขวา" style="height:100px; object-fit:contain;">
+                    <div class="practice-hands" id="practiceHandsDisplay" style="display:flex; justify-content:center; gap:30px; margin:10px 0;">
+                        <img id="practiceLeftHand" src="images/left/0.png" alt="มือซ้าย" style="height:90px; object-fit:contain;">
+                        <img id="practiceRightHand" src="images/right/0.png" alt="มือขวา" style="height:90px; object-fit:contain;">
                     </div>
+                    <div class="practice-vertical" id="practiceVertical" style="display:none; text-align:center; margin:10px 0;">
+                        <div id="practiceVerticalA" style="font-family:'Fredoka One', cursive; font-size:2.5rem; color:#4f46e5;"></div>
+                        <div id="practiceVerticalOp" style="font-family:'Fredoka One', cursive; font-size:2rem; color:#16a34a;"></div>
+                        <div id="practiceVerticalB" style="font-family:'Fredoka One', cursive; font-size:2.5rem; color:#4f46e5;"></div>
+                        <div style="border-bottom:4px solid #4f46e5; margin:5px 0;"></div>
+                        <div id="practiceVerticalResult" style="font-family:'Fredoka One', cursive; font-size:3rem; color:#be123c;">?</div>
+                    </div>
+                    <div class="practice-question" id="practiceQuestion" style="font-size:1rem; color:#475569; margin-bottom:5px;">กดเลือกโจทย์เพื่อเริ่ม</div>
                     <div class="practice-answer" id="practiceAnswer"></div>
                     <div class="practice-actions">
                         <button class="btn btn-add" onclick="revealPracticeAnswer()" id="revealBtn">👆 เฉลย</button>
@@ -1427,16 +1433,26 @@
             currentPracticeProblem = makePracticeProblem(type);
             updatePracticeSelection(type);
 
+            const problem = currentPracticeProblem;
+
             document.getElementById('practiceType').textContent = practiceLabels[type];
-            document.getElementById('practiceQuestion').textContent = `${currentPracticeProblem.a} ${currentPracticeProblem.operator} ${currentPracticeProblem.b} = ?`;
-            document.getElementById('practiceHint').textContent = getPracticeHint(currentPracticeProblem);
+            document.getElementById('practiceQuestion').textContent = getPracticeHint(problem);
             document.getElementById('practiceAnswer').textContent = '';
 
             // Show practice hands display and update with first number
             const handsDisplay = document.getElementById('practiceHandsDisplay');
             if (handsDisplay) handsDisplay.style.display = 'flex';
-            updatePracticeHands(currentPracticeProblem.a);
-            updateDisplay(currentPracticeProblem.a);
+            updatePracticeHands(problem.a);
+
+            // Show vertical format
+            const vertical = document.getElementById('practiceVertical');
+            if (vertical) vertical.style.display = 'block';
+            document.getElementById('practiceVerticalA').textContent = problem.a;
+            document.getElementById('practiceVerticalOp').textContent = problem.operator === '+' ? '+' : '-';
+            document.getElementById('practiceVerticalB').textContent = problem.b;
+            document.getElementById('practiceVerticalResult').textContent = '?';
+
+            updateDisplay(problem.a);
 
             // Show reveal button again
             const revealBtn = document.getElementById('revealBtn');
@@ -1446,8 +1462,8 @@
             }
 
             updateSteps([
-                { value: currentPracticeProblem.a, label: `แสดงตัวตั้ง: ${currentPracticeProblem.a}` },
-                { value: currentPracticeProblem.b, label: `ลองคิด: ${currentPracticeProblem.a} ${currentPracticeProblem.operator} ${currentPracticeProblem.b}` }
+                { value: problem.a, label: `แสดงตัวตั้ง: ${problem.a}` },
+                { value: problem.b, label: `ลองคิด: ${problem.a} ${problem.operator} ${problem.b}` }
             ]);
 
             return currentPracticeProblem;
@@ -1480,6 +1496,7 @@
 
             // Step 1: Show first number (a) on practice hands
             updatePracticeHands(a);
+            document.getElementById('practiceVerticalResult').textContent = '?';
             updateDisplay(a);
             speakNumber(a, true);
             updateSteps([{ value: a, label: `ตัวตั้ง: ${a}` }]);
@@ -1500,6 +1517,7 @@
             for (let i = a + step; operator === '+' ? i <= end : i >= end; i += step) {
                 if (!isAnimating) break;
                 updatePracticeHands(i);
+                document.getElementById('practiceVerticalResult').textContent = i;
                 updateDisplay(i);
                 speakNumber(i, true);
                 updateSteps([{ value: i, label: `นับ: ${i}` }]);
@@ -1509,8 +1527,8 @@
             if (!isAnimating) return;
 
             // Final: Show complete answer
-            document.getElementById('practiceQuestion').textContent =
-                `${a} ${operator} ${b} = ${result}`;
+            document.getElementById('practiceVerticalResult').textContent = result;
+            document.getElementById('practiceQuestion').textContent = getPracticeHint(problem);
             document.getElementById('practiceAnswer').textContent = '';
             updateSteps(getPracticeSteps(problem));
 
