@@ -524,39 +524,6 @@
             margin-bottom: 10px;
         }
 
-        .steps-panel {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            min-height: 46px;
-            margin: 8px 0 14px;
-            padding: 10px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            color: #334155;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .step {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 30px;
-            padding: 5px 10px;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-        }
-
-        .step-arrow {
-            color: #64748b;
-            font-weight: 700;
-        }
-
         .practice-section {
             margin-top: 14px;
             padding: 14px;
@@ -975,8 +942,6 @@
                 <button class="btn btn-clear" onclick="clearAll()">🗑️ ล้าง</button>
                 <button class="btn btn-action" id="soundToggle" onclick="toggleSound()">🔊 ปิดเสียง</button>
             </div>
-            <div class="steps-panel" id="steps"></div>
-
             <div class="lesson-section" id="lesson5">
                 <h2>เลขผสม ห้า</h2>
                 <p>บทเรียนนี้ฝึกการบวกและลบเลขที่เกี่ยวข้องกับ 5 เพื่อช่วยให้คำนวณเร็วและเข้าใจการใช้เลขผสมในใจได้ดีขึ้น.</p>
@@ -1126,6 +1091,20 @@
         let currentAnimationType = null; // 'count', 'practice', 'example', 'examplesub'
         let currentAnimationBtn = null;
 
+        function getInitialAudioDebugEnabled() {
+            const hasDebugParam = new URLSearchParams(window.location.search).has('debugAudio');
+            try {
+                return hasDebugParam || localStorage.getItem('fingerMathAudioDebug') === '1';
+            } catch (error) {
+                return hasDebugParam;
+            }
+        }
+
+        const audioDebugState = {
+            enabled: getInitialAudioDebugEnabled(),
+            history: []
+        };
+
         // Audio Pool for playing voice files
         class AudioPool {
             constructor() {
@@ -1138,6 +1117,18 @@
 
             getAudioPath(num) {
                 return `audio/${num}.mp3`;
+            }
+
+            async playAudio(audio, filename) {
+                try {
+                    await audio.play();
+                    return true;
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        console.warn(`Failed to play audio: ${filename}`, error);
+                    }
+                    return false;
+                }
             }
 
             preload(audioFiles, callback) {
@@ -1174,7 +1165,7 @@
                 if (this.pool[filename]) {
                     const audio = this.pool[filename];
                     audio.currentTime = 0;
-                    await audio.play();
+                    await this.playAudio(audio, filename);
                 }
             }
 
@@ -1187,19 +1178,25 @@
                     if (this.pool[filenames[i]]) {
                         const audio = this.pool[filenames[i]];
                         audio.currentTime = 0;
-                        await audio.play();
+                        const played = await this.playAudio(audio, filenames[i]);
+                        if (!played || seqId !== this.currentSequenceId) continue;
                         
                         if (i < filenames.length - 1) {
                             await new Promise(resolve => {
+                                let isResolved = false;
+                                const finish = () => {
+                                    if (isResolved) return;
+                                    isResolved = true;
+                                    audio.onended = null;
+                                    resolve();
+                                };
                                 const timer = setTimeout(() => {
-                                    if (seqId === this.currentSequenceId) resolve();
+                                    finish();
                                 }, 1500); // fallback
                                 
                                 audio.onended = () => {
                                     clearTimeout(timer);
-                                    setTimeout(() => {
-                                        if (seqId === this.currentSequenceId) resolve();
-                                    }, gap);
+                                    setTimeout(finish, gap);
                                 };
                             });
                         }
@@ -1319,6 +1316,7 @@
             audioPool.stopAll();
             const opFile = operator === '+' ? 'plus' : 'minus';
             const files = [...getAudioFilesForNumber(a), opFile, ...getAudioFilesForNumber(b)];
+            debugAudioSequence(`problem ${a} ${operator} ${b}`, files);
             await audioPool.playSequence(files, 50);
         }
 
@@ -1327,6 +1325,7 @@
             audioPool.stopAll();
             const opFile = operator === '+' ? 'plus' : 'minus';
             const files = ['units', ...getAudioFilesForNumber(unitsA), opFile, ...getAudioFilesForNumber(unitsB)];
+            debugAudioSequence(`units ${unitsA} ${operator} ${unitsB}`, files);
             await audioPool.playSequence(files, 50);
         }
 
@@ -1335,6 +1334,7 @@
             audioPool.stopAll();
             const opFile = operator === '+' ? 'plus' : 'minus';
             const files = ['tens', ...getAudioFilesForNumber(tens), opFile, ...getAudioFilesForNumber(tensB)];
+            debugAudioSequence(`tens ${tens} ${operator} ${tensB}`, files);
             await audioPool.playSequence(files, 50);
         }
 
@@ -1355,8 +1355,10 @@
             
             const files = getAudioFilesForNumber(result);
             if (files.length > 0) {
+                debugAudioSequence(`answer ${result}`, files);
                 await audioPool.playSequence(files, 50);
             } else if (result === 0) {
+                debugAudioSequence('answer 0', ['0']);
                 await audioPool.play('0');
             }
         }
@@ -1366,8 +1368,10 @@
             audioPool.stopAll();
             const files = getAudioFilesForNumber(count);
             if (files.length > 0) {
+                debugAudioSequence(`count ${count}`, files);
                 await audioPool.playSequence(files, 50);
             } else if (count === 0) {
+                debugAudioSequence('count 0', ['0']);
                 await audioPool.play('0');
             }
         }
@@ -1413,6 +1417,87 @@
             return sequence;
         }
 
+        function createAudioDebugEntry(label, files) {
+            const ids = files.map(file => file.toString());
+            const paths = ids.map(id => audioPool.getAudioPath(id));
+            const missing = ids.filter(id => !audioPool.pool[id]).map(id => audioPool.getAudioPath(id));
+
+            return {
+                label,
+                ids,
+                paths,
+                missing,
+                ok: missing.length === 0
+            };
+        }
+
+        function debugAudioSequence(label, files) {
+            const entry = createAudioDebugEntry(label, files);
+            audioDebugState.history.push(entry);
+            if (audioDebugState.history.length > 50) {
+                audioDebugState.history.shift();
+            }
+
+            if (audioDebugState.enabled) {
+                const status = entry.ok ? 'ok' : `missing: ${entry.missing.join(', ')}`;
+                console.info(`[audio-debug] ${entry.label}: ${entry.paths.join(' + ')} (${status})`);
+            }
+
+            return entry;
+        }
+
+        function buildProblemAudioFiles(a, operator, b) {
+            const opFile = operator === '+' ? 'plus' : 'minus';
+            return [...getAudioFilesForNumber(a), opFile, ...getAudioFilesForNumber(b)];
+        }
+
+        window.audioDebug = {
+            enable() {
+                audioDebugState.enabled = true;
+                try {
+                    localStorage.setItem('fingerMathAudioDebug', '1');
+                } catch (error) {
+                    console.warn('Audio debug is enabled for this page, but could not be saved to localStorage.', error);
+                }
+                return audioDebugState.enabled;
+            },
+            disable() {
+                audioDebugState.enabled = false;
+                try {
+                    localStorage.removeItem('fingerMathAudioDebug');
+                } catch (error) {
+                    console.warn('Audio debug was disabled for this page, but localStorage could not be updated.', error);
+                }
+                return audioDebugState.enabled;
+            },
+            clear() {
+                audioDebugState.history = [];
+                return [];
+            },
+            history() {
+                return [...audioDebugState.history];
+            },
+            number(number) {
+                const files = getAudioFilesForNumber(number);
+                return createAudioDebugEntry(`number ${number}`, files.length ? files : ['0']);
+            },
+            problem(a, operator, b) {
+                return createAudioDebugEntry(`problem ${a} ${operator} ${b}`, buildProblemAudioFiles(a, operator, b));
+            },
+            units(unitsA, operator, unitsB) {
+                const opFile = operator === '+' ? 'plus' : 'minus';
+                return createAudioDebugEntry(`units ${unitsA} ${operator} ${unitsB}`, ['units', ...getAudioFilesForNumber(unitsA), opFile, ...getAudioFilesForNumber(unitsB)]);
+            },
+            tens(tensA, operator, tensB) {
+                const opFile = operator === '+' ? 'plus' : 'minus';
+                return createAudioDebugEntry(`tens ${tensA} ${operator} ${tensB}`, ['tens', ...getAudioFilesForNumber(tensA), opFile, ...getAudioFilesForNumber(tensB)]);
+            },
+            answer(result) {
+                const files = getAudioFilesForNumber(result);
+                return createAudioDebugEntry(`answer ${result}`, files.length ? files : ['0']);
+            }
+        };
+
         async function speakNumber(num, priority = false) {
             if (!soundEnabled) return;
             if (num === lastSpokenNumber && !priority) return;
@@ -1423,8 +1508,10 @@
 
             const files = getAudioFilesForNumber(num);
             if (files.length > 0) {
+                debugAudioSequence(`number ${num}`, files);
                 await audioPool.playSequence(files, 50); // Small gap for natural flow
             } else if (num === 0) {
+                debugAudioSequence('number 0', ['0']);
                 await audioPool.play('0');
             }
         }
@@ -1730,7 +1817,7 @@
             if (repeatBtn) repeatBtn.style.display = '';
 
             // Start animated reveal with finger counting
-            animatePracticeReveal(currentPracticeProblem);
+            return animatePracticeReveal(currentPracticeProblem);
         }
 
         async function animatePracticeReveal(problem) {
@@ -1829,7 +1916,7 @@
             
             if (bTens > 0 || (operator === '+' && carry > 0) || (operator === '-' && borrow > 0)) {
                 updateSteps([{ value: tensAfterUnits, label: `สิบ: ${tensAfterUnits} ${opText} ${bTens} ${carry > 0 ? '(รวมทด)' : (borrow > 0 ? '(รวมยืม)' : '')}` }]);
-                await speakTensProblem(tensAfterUnits, operator, bTens);
+                speakTensProblem(tensAfterUnits, operator, bTens);
                 await sleep(2000);
 
                 if (!isAnimating) return;
@@ -1844,7 +1931,7 @@
                     currentTens = i;
                     updatePracticeHandsHandsOnly(currentTens, currentUnits);
                     document.getElementById('practiceVerticalResult').textContent = currentTens * 10 + currentUnits;
-                    await speakNumber(currentTens * 10 + currentUnits, true);
+                    speakNumber(currentTens * 10 + currentUnits, true);
                     updateSteps([{ value: currentTens * 10 + currentUnits, label: `สิบ: ${i}` }]);
                     await sleep(1500);
                 }
@@ -1859,7 +1946,9 @@
                 const finalHundreds = Math.floor(result / 100);
                 if (finalHundreds !== hundredsA) {
                     audioPool.stopAll();
-                    await audioPool.playSequence(['hundreds'], 50);
+                    const files = ['hundreds'];
+                    debugAudioSequence('hundreds carry', files);
+                    audioPool.playSequence(files, 50);
                     updateDisplay(result);
                     await sleep(1500);
                 }
@@ -1868,13 +1957,17 @@
             if (!isAnimating) return;
 
             // Final: Speak answer
+            updateDisplay(result);
+            updatePracticeHands(result);
             document.getElementById('practiceVerticalResult').textContent = result;
+            document.getElementById('practiceAnswer').textContent = `คำตอบ: ${result}`;
             speakAnswer(result);
             document.getElementById('practiceQuestion').textContent = getPracticeHint(problem);
             updateSteps([{ value: result, label: `คำตอบ: ${numberToThai(result)}` }]);
 
             if (btn) btn.style.display = 'none';
             isAnimating = false;
+            return problem;
         }
 
         function updatePracticeHandsHandsOnly(tens, units) {

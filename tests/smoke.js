@@ -57,6 +57,43 @@ function expectCondition(condition, label) {
   ]), 'navbar links');
   expectEqual(initial.background, 'none', 'hundreds box uses local CSS');
 
+  const audioDebug = await page.evaluate(() => ({
+    exists: Boolean(window.audioDebug),
+    problem13Plus21: window.audioDebug.problem(13, '+', 21),
+    units3Plus1: window.audioDebug.units(3, '+', 1),
+    tens1Plus2: window.audioDebug.tens(1, '+', 2),
+    answer34: window.audioDebug.answer(34),
+    number999: window.audioDebug.number(999),
+    allNumbersOk: Array.from({ length: 1000 }, (_, number) => window.audioDebug.number(number))
+      .every(entry => entry.ok),
+  }));
+  expectEqual(audioDebug.exists, true, 'audio debug helper exists');
+  expectEqual(JSON.stringify(audioDebug.problem13Plus21.paths), JSON.stringify([
+    'audio/10.mp3',
+    'audio/3.mp3',
+    'audio/plus.mp3',
+    'audio/21.mp3',
+  ]), 'audio debug 13 + 21 sequence');
+  expectEqual(audioDebug.problem13Plus21.ok, true, 'audio debug 13 + 21 files exist');
+  expectEqual(JSON.stringify(audioDebug.units3Plus1.paths), JSON.stringify([
+    'audio/units.mp3',
+    'audio/3.mp3',
+    'audio/plus.mp3',
+    'audio/1.mp3',
+  ]), 'audio debug units sequence');
+  expectEqual(JSON.stringify(audioDebug.tens1Plus2.paths), JSON.stringify([
+    'audio/tens.mp3',
+    'audio/1.mp3',
+    'audio/plus.mp3',
+    'audio/2.mp3',
+  ]), 'audio debug tens sequence');
+  expectEqual(JSON.stringify(audioDebug.answer34.paths), JSON.stringify([
+    'audio/30.mp3',
+    'audio/4.mp3',
+  ]), 'audio debug answer sequence');
+  expectEqual(audioDebug.number999.ok, true, 'audio debug 999 files exist');
+  expectEqual(audioDebug.allNumbersOk, true, 'audio debug all 0-999 files exist');
+
   await page.getByRole('link', { name: 'เทคนิค' }).click();
   await page.waitForTimeout(50);
   const lesson5Scroll = await page.evaluate(() => {
