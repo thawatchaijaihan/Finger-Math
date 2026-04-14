@@ -1130,6 +1130,94 @@
         let currentAnimationType = null; // 'count', 'practice', 'example', 'examplesub'
         let currentAnimationBtn = null;
 
+        // Audio Pool for playing voice files
+        class AudioPool {
+            constructor() {
+                this.pool = {};
+                this.preloadQueue = [];
+                this.loadedCount = 0;
+                this.totalCount = 0;
+            }
+
+            getAudioPath(num) {
+                return `audio/${num}.mp3`;
+            }
+
+            preload(audioFiles, callback) {
+                this.totalCount = audioFiles.length;
+                this.loadedCount = 0;
+
+                audioFiles.forEach(filename => {
+                    const audio = new Audio();
+                    audio.preload = 'auto';
+                    audio.src = this.getAudioPath(filename);
+                    audio.addEventListener('canplaythrough', () => {
+                        this.loadedCount++;
+                        if (this.loadedCount === this.totalCount && callback) {
+                            callback();
+                        }
+                    });
+                    audio.addEventListener('error', () => {
+                        this.loadedCount++;
+                        console.warn(`Failed to load audio: ${filename}`);
+                    });
+                    this.pool[filename] = audio;
+                });
+            }
+
+            async play(filename, delay = 0) {
+                if (delay > 0) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+                if (!soundEnabled) return;
+                if (this.pool[filename]) {
+                    const audio = this.pool[filename];
+                    audio.currentTime = 0;
+                    await audio.play();
+                }
+            }
+
+            async playSequence(filenames, gap = 300) {
+                for (let i = 0; i < filenames.length; i++) {
+                    if (!soundEnabled) break;
+                    if (this.pool[filenames[i]]) {
+                        const audio = this.pool[filenames[i]];
+                        audio.currentTime = 0;
+                        await audio.play();
+                        if (i < filenames.length - 1) {
+                            await new Promise(resolve => {
+                                audio.onended = () => setTimeout(resolve, gap);
+                                setTimeout(resolve, 1500); // fallback
+                            });
+                        }
+                    }
+                }
+            }
+
+            stop(filename) {
+                if (this.pool[filename]) {
+                    this.pool[filename].pause();
+                    this.pool[filename].currentTime = 0;
+                }
+            }
+
+            stopAll() {
+                Object.values(this.pool).forEach(audio => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                });
+            }
+        }
+
+        const audioPool = new AudioPool();
+
+        // Preload all audio files
+        const audioFiles = [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 20, 21, 30, 31, 40, 41, 50, 51, 60, 61, 70, 71, 80, 81, 90, 91, 100,
+            'บวก', 'ลบ', 'หลักร้อย', 'หลักสิบ', 'หลักหน่วย'
+        ];
+        audioPool.preload(audioFiles);
+
         const practiceLabels = {
             'add-no-carry': 'บวก: ไม่ทด',
             'add-carry': 'บวก: มีทด',
@@ -1284,27 +1372,71 @@
             speechSynth.speak(utterance);
         }
 
-        function speakNumber(num, priority = false) {
+        function getAudioFilesForNumber(num) {
+            if (num === 0) return []; // Skip zero or return ['0'] if file exists
+            
+            let sequence = [];
+            let n = Math.floor(Math.abs(num));
+            
+            if (num < 0) sequence.push('ลบ');
+            
+            if (n >= 100) {
+                const hundreds = Math.floor(n / 100);
+                if (hundreds === 1) {
+                    sequence.push('100'); // "หนึ่งร้อย"
+                } else {
+                    sequence.push(hundreds.toString());
+                    sequence.push('หลักร้อย'); // "ร้อย"
+                }
+                n %= 100;
+            }
+            
+            if (n > 0) {
+                // If the remaining part has a direct file (e.g., 11, 21, 31, 1-9, 10, 20...)
+                if (audioPool.pool[n.toString()]) {
+                    sequence.push(n.toString());
+                } else {
+                    // Separate into tens and units
+                    const tens = Math.floor(n / 10);
+                    const units = n % 10;
+                    
+                    if (tens > 0) {
+                        sequence.push((tens * 10).toString());
+                    }
+                    if (units > 0) {
+                        sequence.push(units.toString());
+                    }
+                }
+            }
+            
+            return sequence;
+        }
+
+        async function speakNumber(num, priority = false) {
             if (!soundEnabled) return;
             if (num === lastSpokenNumber && !priority) return;
             lastSpokenNumber = num;
 
-            if (speechSynth.paused && !priority) return;
-
-            speechSynth.cancel();
-            const utterance = new SpeechSynthesisUtterance(numberToThai(num));
-            utterance.lang = 'th-TH';
-            utterance.rate = 0.6;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-
-            const voices = speechSynth.getVoices();
-            const thaiVoice = voices.find(v => v.lang.includes('th'));
-            if (thaiVoice) {
-                utterance.voice = thaiVoice;
+            // Stop current speech if priority
+            if (priority) {
+                // We don't have a global "stop all" in AudioPool yet, but we can manage sequence playback
             }
 
-            speechSynth.speak(utterance);
+            const files = getAudioFilesForNumber(num);
+            if (files.length > 0) {
+                await audioPool.playSequence(files, 50); // Small gap for natural flow
+            } else if (num === 0) {
+                // Fallback for zero if needed, or play '0' if file exists
+                if (audioPool.pool['0']) {
+                    await audioPool.play('0');
+                } else {
+                    // Final fallback to speech API for zero
+                    speechSynth.cancel();
+                    const utterance = new SpeechSynthesisUtterance('ศูนย์');
+                    utterance.lang = 'th-TH';
+                    speechSynth.speak(utterance);
+                }
+            }
         }
 
         function stopSpeaking() {
