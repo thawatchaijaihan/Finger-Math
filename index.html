@@ -1225,6 +1225,50 @@
             speechSynth.speak(utterance);
         }
 
+        function speakUnitsProblem(unitsA, operator, unitsB) {
+            if (!soundEnabled) return;
+            speechSynth.cancel();
+            const opText = operator === '+' ? 'บวก' : 'ลบ';
+            const utterance = new SpeechSynthesisUtterance(`${numberToThaiOnly(unitsA)} ${opText} ${numberToThaiOnly(unitsB)}`);
+            utterance.lang = 'th-TH';
+            utterance.rate = 0.8;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            const voices = speechSynth.getVoices();
+            const thaiVoice = voices.find(v => v.lang.includes('th'));
+            if (thaiVoice) utterance.voice = thaiVoice;
+            speechSynth.speak(utterance);
+        }
+
+        function speakTensProblem(tens, operator, tensB) {
+            if (!soundEnabled) return;
+            speechSynth.cancel();
+            const opText = operator === '+' ? 'บวก' : 'ลบ';
+            const utterance = new SpeechSynthesisUtterance(`${numberToThaiOnly(tens)} ${opText} ${numberToThaiOnly(tensB)}`);
+            utterance.lang = 'th-TH';
+            utterance.rate = 0.8;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            const voices = speechSynth.getVoices();
+            const thaiVoice = voices.find(v => v.lang.includes('th'));
+            if (thaiVoice) utterance.voice = thaiVoice;
+            speechSynth.speak(utterance);
+        }
+
+        function speakAnswer(result) {
+            if (!soundEnabled) return;
+            speechSynth.cancel();
+            const utterance = new SpeechSynthesisUtterance(`ตอบ ${numberToThai(result)}`);
+            utterance.lang = 'th-TH';
+            utterance.rate = 0.8;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            const voices = speechSynth.getVoices();
+            const thaiVoice = voices.find(v => v.lang.includes('th'));
+            if (thaiVoice) utterance.voice = thaiVoice;
+            speechSynth.speak(utterance);
+        }
+
         function speakCount(count) {
             if (!soundEnabled) return;
             speechSynth.cancel();
@@ -1549,86 +1593,123 @@
             const operator = problem.operator;
             const result = problem.result;
 
-            const tensA = Math.floor(a / 10);
+            const hundredsA = Math.floor(a / 100);
+            const tensA = Math.floor((a % 100) / 10);
             const unitsA = a % 10;
-            const tensB = Math.floor(b / 10);
+            const hundredsB = Math.floor(b / 100);
+            const tensB = Math.floor((b % 100) / 10);
             const unitsB = b % 10;
 
-            // Step 1: Show starting value on hands
-            updatePracticeHands(a);
-            document.getElementById('practiceVerticalResult').textContent = '?';
-            updateDisplay(a);
-            updateSteps([{ value: a, label: `ตั้ง: ${a}` }]);
-            await sleep(1500);
+            // Step 1: Speak full problem
+            updateSteps([{ value: a, label: `โจทย์: ${numberToThaiOnly(a)} ${operator === '+' ? 'บวก' : 'ลบ'} ${numberToThaiOnly(b)}` }]);
+            speakProblem(a, operator, b);
+            await sleep(2500);
 
             if (!isAnimating) return;
 
-            // Step 2: Speak problem phrase
-            speakProblem(a, operator, b);
-            updateSteps([{ value: a, label: `${numberToThaiOnly(a)} ${operator === '+' ? 'บวก' : 'ลบ'} ${numberToThaiOnly(b)}` }]);
+            // Step 2: Units - speak problem
+            const opText = operator === '+' ? 'บวก' : 'ลบ';
+            updateSteps([{ value: unitsA, label: `หน่วย: ${numberToThaiOnly(unitsA)} ${opText} ${numberToThaiOnly(unitsB)}` }]);
+            speakUnitsProblem(unitsA, operator, unitsB);
             await sleep(2000);
 
             if (!isAnimating) return;
 
-            // Step 3: Add units first (right hand)
-            updateSteps([{ value: unitsA, label: `หน่วย ${unitsA} + ${unitsB}` }]);
-            await sleep(1000);
-
-            if (!isAnimating) return;
-
-            // Count and add unitsB
+            // Step 3: Add/subtract units (right hand)
             let carry = 0;
+            let borrow = 0;
             let currentUnits = unitsA;
             let currentTens = tensA;
+            let currentHundreds = hundredsA;
             let count = 0;
 
-            for (let i = 1; i <= unitsB; i++) {
-                if (!isAnimating) return;
-                count++;
-                currentUnits++;
-
-                if (currentUnits >= 10) {
-                    currentUnits = 0;
-                    carry = 1;
-                    updatePracticeHandsHandsOnly(currentTens + carry, currentUnits);
-                    speakCount(count);
-                    updateSteps([{ value: count, label: `ทด ${carry}: หน่วย ${currentUnits}` }]);
-                } else {
-                    updatePracticeHandsHandsOnly(currentTens, currentUnits);
-                    speakCount(count);
-                    updateSteps([{ value: count, label: `นับ ${count}: หน่วย ${currentUnits}` }]);
-                }
-
-                document.getElementById('practiceVerticalResult').textContent = (currentTens + carry) * 10 + currentUnits;
-                await sleep(1500);
-            }
-
-            if (!isAnimating) return;
-
-            // Step 4: Add tens digit including carry
-            const totalTensToAdd = tensB + carry;
-            if (totalTensToAdd > 0) {
-                updateSteps([{ value: currentTens, label: `สิบ ${currentTens} + ${totalTensToAdd}` }]);
-                await sleep(1000);
-
-                for (let i = 1; i <= totalTensToAdd; i++) {
+            if (operator === '+') {
+                for (let i = 1; i <= unitsB; i++) {
                     if (!isAnimating) return;
-                    currentTens++;
-                    updatePracticeHandsHandsOnly(currentTens, currentUnits);
+                    count++;
+                    currentUnits++;
+
+                    if (currentUnits >= 10) {
+                        currentUnits = 0;
+                        carry = 1;
+                        currentTens++;
+                        updatePracticeHandsHandsOnly(currentTens, currentUnits);
+                        speakCount(count);
+                        updateSteps([{ value: count, label: `ทด ${carry}: หน่วย ${currentUnits}` }]);
+                    } else {
+                        updatePracticeHandsHandsOnly(currentTens, currentUnits);
+                        speakCount(count);
+                        updateSteps([{ value: count, label: `นับ ${count}: หน่วย ${currentUnits}` }]);
+                    }
+
                     document.getElementById('practiceVerticalResult').textContent = currentTens * 10 + currentUnits;
-                    speakNumber(currentTens * 10 + currentUnits, true);
-                    updateSteps([{ value: currentTens * 10 + currentUnits, label: `สิบ: ${currentTens}` }]);
+                    await sleep(1500);
+                }
+            } else {
+                // Subtraction - borrow from tens
+                for (let i = 1; i <= unitsB; i++) {
+                    if (!isAnimating) return;
+                    count++;
+                    currentUnits--;
+
+                    if (currentUnits < 0) {
+                        currentUnits = 9;
+                        currentTens--;
+                        borrow = 1;
+                        updatePracticeHandsHandsOnly(currentTens, currentUnits);
+                        speakCount(count);
+                        updateSteps([{ value: count, label: `ยืม ${borrow}: หน่วย ${currentUnits}` }]);
+                    } else {
+                        updatePracticeHandsHandsOnly(currentTens, currentUnits);
+                        speakCount(count);
+                        updateSteps([{ value: count, label: `ลบ ${count}: หน่วย ${currentUnits}` }]);
+                    }
+
+                    document.getElementById('practiceVerticalResult').textContent = currentTens * 10 + currentUnits;
                     await sleep(1500);
                 }
             }
 
             if (!isAnimating) return;
 
-            // Final
+            // Step 4: Tens - speak problem
+            const tensAfterCarry = currentTens;
+            const totalTensToAdd = tensB + carry;
+            const totalTensToSub = tensB - borrow;
+
+            if (operator === '+') {
+                updateSteps([{ value: tensAfterCarry, label: `สิบ: ${numberToThaiOnly(tensAfterCarry)} ${opText} ${numberToThaiOnly(tensB)} ${carry > 0 ? '(รวมทด)' : ''}` }]);
+                speakTensProblem(tensAfterCarry, operator, totalTensToAdd);
+            } else {
+                updateSteps([{ value: tensAfterCarry, label: `สิบ: ${numberToThaiOnly(tensAfterCarry)} ${opText} ${numberToThaiOnly(tensB)} ${borrow > 0 ? '(รวมยืม)' : ''}` }]);
+                speakTensProblem(tensAfterCarry, operator, totalTensToSub);
+            }
+            await sleep(2000);
+
+            if (!isAnimating) return;
+
+            // Step 5: Add/subtract tens (left hand)
+            const tensStep = operator === '+' ? 1 : -1;
+            const tensEnd = operator === '+' ? totalTensToAdd : totalTensToSub;
+            const tensStart = tensAfterCarry;
+
+            for (let i = tensStart + tensStep; operator === '+' ? i <= tensEnd : i >= tensEnd; i += tensStep) {
+                if (!isAnimating) return;
+                currentTens = i;
+                updatePracticeHandsHandsOnly(currentTens, currentUnits);
+                document.getElementById('practiceVerticalResult').textContent = currentTens * 10 + currentUnits;
+                speakNumber(currentTens * 10 + currentUnits, true);
+                updateSteps([{ value: currentTens * 10 + currentUnits, label: `สิบ: ${numberToThaiOnly(i)}` }]);
+                await sleep(1500);
+            }
+
+            if (!isAnimating) return;
+
+            // Final: Speak answer
             document.getElementById('practiceVerticalResult').textContent = result;
-            speakNumber(result, true);
+            speakAnswer(result);
             document.getElementById('practiceQuestion').textContent = getPracticeHint(problem);
-            updateSteps([{ value: result, label: `คำตอบ: ${result}` }]);
+            updateSteps([{ value: result, label: `คำตอบ: ${numberToThai(result)}` }]);
 
             if (btn) btn.style.display = 'none';
             isAnimating = false;
