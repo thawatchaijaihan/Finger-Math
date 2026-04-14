@@ -1083,13 +1083,16 @@
                         <img id="practiceRightHand" src="images/right/0.png" alt="มือขวา" style="height:90px; object-fit:contain;">
                     </div>
                     <div class="practice-vertical" id="practiceVertical" style="display:none; text-align:center; margin:10px 0;">
-                        <div id="practiceVerticalA" style="font-family:'Fredoka One', cursive; font-size:2.5rem; color:#4f46e5;"></div>
-                        <div id="practiceVerticalOp" style="font-family:'Fredoka One', cursive; font-size:2rem; color:#16a34a;"></div>
-                        <div id="practiceVerticalB" style="font-family:'Fredoka One', cursive; font-size:2.5rem; color:#4f46e5;"></div>
-                        <div style="border-bottom:4px solid #4f46e5; margin:5px 0;"></div>
-                        <div id="practiceVerticalResult" style="font-family:'Fredoka One', cursive; font-size:3rem; color:#be123c;">?</div>
+                        <div id="practiceVerticalOp" style="font-family:'Fredoka One', cursive; font-size:2.5rem; color:#16a34a; margin-bottom:5px;"></div>
+                        <div style="display:flex; justify-content:center; gap:30px; font-family:'Fredoka One', cursive; font-size:2rem;">
+                            <span id="practiceVerticalBTens" style="color:#4f46e5;"></span>
+                            <span style="color:#888;">|</span>
+                            <span id="practiceVerticalBUnits" style="color:#4f46e5;"></span>
+                        </div>
+                        <div style="border-bottom:4px solid #4f46e5; margin:5px 0 5px;"></div>
+                        <div id="practiceVerticalResult" style="font-family:'Fredoka One', cursive; font-size:2.5rem; color:#be123c;">?</div>
                     </div>
-                    <div class="practice-question" id="practiceQuestion" style="font-size:1rem; color:#475569; margin-bottom:5px;">กดเลือกโจทย์เพื่อเริ่ม</div>
+                    <div class="practice-question" id="practiceQuestion" style="font-size:0.9rem; color:#475569; margin:5px 0;">กดเลือกโจทย์เพื่อเริ่ม</div>
                     <div class="practice-answer" id="practiceAnswer"></div>
                     <div class="practice-actions">
                         <button class="btn btn-add" onclick="revealPracticeAnswer()" id="revealBtn">👆 เฉลย</button>
@@ -1283,19 +1286,21 @@
         }
 
         function getPracticeHint(problem) {
+            const tensA = Math.floor(problem.a / 10);
             const unitA = problem.a % 10;
+            const tensB = Math.floor(problem.b / 10);
             const unitB = problem.b % 10;
 
             if (problem.type === 'add-no-carry') {
-                return `หลักหน่วย ${unitA} + ${unitB} = ${unitA + unitB} ไม่เกิน 9 จึงไม่มีตัวทด`;
+                return `หลักหน่วย ${unitA} + ${unitB} = ${unitA + unitB} ไม่เกิน 9 ไม่ทด`;
             }
             if (problem.type === 'add-carry') {
-                return `หลักหน่วย ${unitA} + ${unitB} = ${unitA + unitB} มากกว่า 9 จึงทด 1 ไปหลักสิบ`;
+                return `หน่วย ${unitA}+${unitB}=${unitA+unitB} ทด1 → สิบ ${tensA}+${tensB}+1=${tensA+tensB+1}`;
             }
             if (problem.type === 'subtract-no-borrow') {
                 return `หลักหน่วย ${unitA} - ${unitB} ลบได้เลย ไม่ต้องยืม`;
             }
-            return `หลักหน่วย ${unitA} น้อยกว่า ${unitB} จึงยืม 1 สิบมาเป็น ${unitA + 10}`;
+            return `หน่วย ${unitA} < ${unitB} ยืม1 → ${unitA+10}-${unitB}=${unitA+10-unitB} สิบ ${tensA}-1-${tensB}=${tensA-1-tensB}`;
         }
 
         function getPracticeSteps(problem) {
@@ -1434,6 +1439,8 @@
             updatePracticeSelection(type);
 
             const problem = currentPracticeProblem;
+            const tensB = Math.floor(problem.b / 10);
+            const unitsB = problem.b % 10;
 
             document.getElementById('practiceType').textContent = practiceLabels[type];
             document.getElementById('practiceQuestion').textContent = getPracticeHint(problem);
@@ -1444,12 +1451,12 @@
             if (handsDisplay) handsDisplay.style.display = 'flex';
             updatePracticeHands(problem.a);
 
-            // Show vertical format
+            // Show vertical format: hands at top, then op, then b split
             const vertical = document.getElementById('practiceVertical');
             if (vertical) vertical.style.display = 'block';
-            document.getElementById('practiceVerticalA').textContent = problem.a;
             document.getElementById('practiceVerticalOp').textContent = problem.operator === '+' ? '+' : '-';
-            document.getElementById('practiceVerticalB').textContent = problem.b;
+            document.getElementById('practiceVerticalBTens').textContent = tensB > 0 ? tensB : '';
+            document.getElementById('practiceVerticalBUnits').textContent = unitsB;
             document.getElementById('practiceVerticalResult').textContent = '?';
 
             updateDisplay(problem.a);
