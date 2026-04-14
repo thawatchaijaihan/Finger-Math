@@ -1096,6 +1096,7 @@
                     <div class="practice-answer" id="practiceAnswer"></div>
                     <div class="practice-actions">
                         <button class="btn btn-add" onclick="revealPracticeAnswer()" id="revealBtn">👆 เฉลย</button>
+                        <button class="btn btn-action" onclick="repeatReveal()" id="repeatBtn" style="display:none;">🔄 ทวนเฉลย</button>
                         <button class="btn btn-clear" onclick="repeatPracticeProblem()">สุ่มอีกข้อ</button>
                     </div>
                 </div>
@@ -1572,11 +1573,28 @@
             return newPracticeProblem(currentPracticeType);
         }
 
+        function repeatReveal() {
+            if (isAnimating) return;
+            if (!currentPracticeProblem) return;
+            // Show repeat button
+            const repeatBtn = document.getElementById('repeatBtn');
+            if (repeatBtn) repeatBtn.style.display = '';
+            // Reset practice hands to starting position
+            updatePracticeHands(currentPracticeProblem.a);
+            document.getElementById('practiceVerticalResult').textContent = '?';
+            // Start reveal again
+            animatePracticeReveal(currentPracticeProblem);
+        }
+
         function revealPracticeAnswer() {
             if (isAnimating) return currentPracticeProblem;
             if (!currentPracticeProblem) {
                 newPracticeProblem(currentPracticeType);
             }
+
+            // Show repeat button
+            const repeatBtn = document.getElementById('repeatBtn');
+            if (repeatBtn) repeatBtn.style.display = '';
 
             // Start animated reveal with finger counting
             animatePracticeReveal(currentPracticeProblem);
