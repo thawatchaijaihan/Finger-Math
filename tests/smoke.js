@@ -39,69 +39,82 @@ function expectCondition(condition, label) {
       text: link.textContent.trim(),
       href: link.getAttribute('href'),
     })),
-    practiceAfterLesson10: Boolean(
-      document.querySelector('#lesson10').compareDocumentPosition(document.querySelector('#practice')) &
-      Node.DOCUMENT_POSITION_FOLLOWING
-    ),
+    lesson5: Boolean(document.querySelector('#lesson5')),
+    lesson10: Boolean(document.querySelector('#lesson10')),
     hundredsHidden: getComputedStyle(document.querySelector('#hundredsUnit')).display === 'none',
     background: getComputedStyle(document.querySelector('#hundredsBox')).backgroundImage,
   }));
   expectEqual(initial.steps, false, 'steps panel is removed');
   expectEqual(initial.practice, true, 'practice section exists');
-  expectEqual(initial.practiceAfterLesson10, true, 'practice follows lesson 10');
+  expectEqual(initial.lesson5, false, 'lesson 5 section is removed');
+  expectEqual(initial.lesson10, false, 'lesson 10 section is removed');
   expectEqual(initial.hundredsHidden, true, 'hundreds starts hidden');
   expectEqual(JSON.stringify(initial.navLinks.slice(0, 3)), JSON.stringify([
     { text: 'การนับเลข', href: '#display' },
-    { text: 'เทคนิค', href: '#lesson5' },
     { text: 'แบบฝึก', href: '#practice' },
+    { text: 'ติดต่อแอดมิน', href: '#' },
   ]), 'navbar links');
   expectEqual(initial.background, 'none', 'hundreds box uses local CSS');
 
-  const audioDebug = await page.evaluate(() => ({
-    exists: Boolean(window.audioDebug),
-    problem13Plus21: window.audioDebug.problem(13, '+', 21),
-    units3Plus1: window.audioDebug.units(3, '+', 1),
-    tens1Plus2: window.audioDebug.tens(1, '+', 2),
-    answer34: window.audioDebug.answer(34),
-    number999: window.audioDebug.number(999),
-    allNumbersOk: Array.from({ length: 1000 }, (_, number) => window.audioDebug.number(number))
+  const speechDebug = await page.evaluate(() => ({
+    exists: Boolean(window.speechDebug),
+    oldHelper: Boolean(window['au' + 'dioDebug']),
+    problem13Plus21: window.speechDebug.problem(13, '+', 21),
+    units3Plus1: window.speechDebug.units(3, '+', 1),
+    tens1Plus2: window.speechDebug.tens(1, '+', 2),
+    answer34: window.speechDebug.answer(34),
+    number999: window.speechDebug.number(999),
+    allNumbersOk: Array.from({ length: 1000 }, (_, number) => window.speechDebug.number(number))
       .every(entry => entry.ok),
   }));
-  expectEqual(audioDebug.exists, true, 'audio debug helper exists');
-  expectEqual(JSON.stringify(audioDebug.problem13Plus21.paths), JSON.stringify([
-    'audio/10.mp3',
-    'audio/3.mp3',
-    'audio/plus.mp3',
-    'audio/21.mp3',
-  ]), 'audio debug 13 + 21 sequence');
-  expectEqual(audioDebug.problem13Plus21.ok, true, 'audio debug 13 + 21 files exist');
-  expectEqual(JSON.stringify(audioDebug.units3Plus1.paths), JSON.stringify([
-    'audio/units.mp3',
-    'audio/3.mp3',
-    'audio/plus.mp3',
-    'audio/1.mp3',
-  ]), 'audio debug units sequence');
-  expectEqual(JSON.stringify(audioDebug.tens1Plus2.paths), JSON.stringify([
-    'audio/tens.mp3',
-    'audio/1.mp3',
-    'audio/plus.mp3',
-    'audio/2.mp3',
-  ]), 'audio debug tens sequence');
-  expectEqual(JSON.stringify(audioDebug.answer34.paths), JSON.stringify([
-    'audio/30.mp3',
-    'audio/4.mp3',
-  ]), 'audio debug answer sequence');
-  expectEqual(audioDebug.number999.ok, true, 'audio debug 999 files exist');
-  expectEqual(audioDebug.allNumbersOk, true, 'audio debug all 0-999 files exist');
+  expectEqual(speechDebug.exists, true, 'speech debug helper exists');
+  expectEqual(speechDebug.oldHelper, false, 'legacy debug helper is removed');
+  expectEqual(speechDebug.problem13Plus21.text, 'สิบสาม บวก ยี่สิบเอ็ด', 'speech debug 13 + 21 phrase');
+  expectEqual(speechDebug.problem13Plus21.ok, true, 'speech debug 13 + 21 is valid');
+  expectEqual(speechDebug.units3Plus1.text, 'หลักหน่วย สาม บวก หนึ่ง', 'speech debug units phrase');
+  expectEqual(speechDebug.tens1Plus2.text, 'หลักสิบ หนึ่ง บวก สอง', 'speech debug tens phrase');
+  expectEqual(speechDebug.answer34.text, 'ตอบ สามสิบสี่', 'speech debug answer phrase');
+  expectEqual(speechDebug.number999.text, 'เก้าร้อยเก้าสิบเก้า', 'speech debug 999 phrase');
+  expectEqual(speechDebug.allNumbersOk, true, 'speech debug all 0-999 phrases exist');
 
-  await page.getByRole('link', { name: 'เทคนิค' }).click();
-  await page.waitForTimeout(50);
-  const lesson5Scroll = await page.evaluate(() => {
-    const navBottom = document.querySelector('.navbar').getBoundingClientRect().bottom;
-    const lessonTop = document.querySelector('#lesson5').getBoundingClientRect().top;
-    return { navBottom, lessonTop };
+  const strictSpeechOrder = await page.evaluate(async () => {
+    const events = [];
+    const originalSpeak = window.speechSynthesis.speak;
+    const originalCancel = window.speechSynthesis.cancel;
+
+    window.speechSynthesis.cancel = () => {};
+    window.speechSynthesis.speak = utterance => {
+      events.push(`speak:${utterance.text}`);
+      setTimeout(() => {
+        events.push(`end:${utterance.text}`);
+        utterance.onend?.(new Event('end'));
+      }, 0);
+    };
+
+    try {
+      await window.speakProblem(13, '+', 21);
+    } finally {
+      window.speechSynthesis.speak = originalSpeak;
+      window.speechSynthesis.cancel = originalCancel;
+    }
+
+    return events;
   });
-  expectCondition(lesson5Scroll.lessonTop >= lesson5Scroll.navBottom, 'technique link clears sticky nav');
+  expectEqual(JSON.stringify(strictSpeechOrder), JSON.stringify([
+    'speak:สิบสาม บวก ยี่สิบเอ็ด',
+    'end:สิบสาม บวก ยี่สิบเอ็ด',
+  ]), 'speech playback waits for utterance end');
+
+  await page.evaluate(() => window.toggleSound());
+
+  await page.getByRole('link', { name: 'แบบฝึก' }).click();
+  await page.waitForTimeout(50);
+  const practiceScroll = await page.evaluate(() => {
+    const navBottom = document.querySelector('.navbar').getBoundingClientRect().bottom;
+    const practiceTop = document.querySelector('#practice').getBoundingClientRect().top;
+    return { navBottom, practiceTop };
+  });
+  expectCondition(practiceScroll.practiceTop >= practiceScroll.navBottom, 'practice link clears sticky nav');
 
   await page.locator('#numberInput').fill('27');
   await page.locator('#numberInput').press('Tab');
@@ -141,26 +154,6 @@ function expectCondition(condition, label) {
   await page.getByRole('button', { name: '+ บวก' }).click();
   await page.waitForTimeout(50);
   expectEqual(await page.locator('#numberInput').inputValue(), '999', 'addition clamps at 999');
-
-  await page.setViewportSize({ width: 1000, height: 900 });
-  await page.locator('#lesson10').scrollIntoViewIfNeeded();
-  const lesson10ColumnCount = await page.evaluate(() =>
-    getComputedStyle(document.querySelector('#lesson10 .lesson-example'))
-      .gridTemplateColumns
-      .split(' ')
-      .filter(Boolean)
-      .length
-  );
-  expectEqual(lesson10ColumnCount, 2, 'lesson 10 example columns');
-  await page.locator('button').filter({ hasText: 'แสดงตัวอย่าง' }).nth(4).click();
-  await page.waitForTimeout(50);
-
-  const lesson10 = await page.evaluate(() => ({
-    left: document.querySelector('#counting-hand-10-left').getAttribute('src'),
-    right: document.querySelector('#counting-hand-10-right').getAttribute('src'),
-  }));
-  expectEqual(lesson10.left, 'images/left/10.png', 'lesson 10 left hand');
-  expectEqual(lesson10.right, 'images/right/0.png', 'lesson 10 right hand');
 
   for (const type of ['add-no-carry', 'add-carry', 'subtract-no-borrow', 'subtract-borrow']) {
     const problem = await page.evaluate(problemType => window.newPracticeProblem(problemType), type);

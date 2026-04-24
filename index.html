@@ -103,7 +103,6 @@
         }
 
         #display,
-        .lesson-section,
         .practice-section {
             scroll-margin-top: 112px;
         }
@@ -321,125 +320,6 @@
             font-size: 0.9rem;
             font-weight: 600;
             color: #555;
-        }
-
-        .lesson-section {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 14px 16px;
-            margin-top: 16px;
-            color: #1f2937;
-        }
-
-        .lesson-section h2 {
-            margin: 0 0 8px;
-            font-size: 1rem;
-        }
-
-        .lesson-section h3 {
-            margin: 20px 0 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .lesson-section p {
-            margin: 0 0 8px;
-            line-height: 1.6;
-            color: #334155;
-        }
-
-        .lesson-section ul {
-            margin: 0;
-            padding-left: 18px;
-            color: #334155;
-        }
-
-        .lesson-section li {
-            margin-bottom: 6px;
-        }
-
-        .lesson-illustration {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: center;
-            margin: 12px 0 8px;
-        }
-
-        .lesson-illustration figure {
-            flex: 1 1 120px;
-            min-width: 120px;
-            max-width: 180px;
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 10px;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
-            text-align: center;
-        }
-
-        .lesson-illustration img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 12px;
-        }
-
-        .lesson-illustration figcaption {
-            margin-top: 8px;
-            font-size: 0.82rem;
-            color: #475569;
-        }
-
-        .lesson-example {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin: 14px 0;
-        }
-
-        #lesson10 .lesson-example {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        @media (max-width: 600px) {
-            .lesson-example {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .lesson-example figure {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 12px;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
-            text-align: center;
-        }
-
-        .lesson-example img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 12px;
-        }
-
-        .example-hands {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-            gap: 8px;
-        }
-
-        .example-hands img {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
-        }
-
-        .lesson-example p {
-            margin: 10px 0 0;
-            font-size: 0.9rem;
-            color: #334155;
         }
 
         .calc-input {
@@ -885,7 +765,6 @@
                 <span class="nav-title">🧮 จินตคณิต</span>
                 <div class="nav-links">
                     <a href="#display">การนับเลข</a>
-                    <a href="#lesson5">เทคนิค</a>
                     <a href="#practice">แบบฝึก</a>
                     <a href="#" onclick="event.preventDefault(); openContactPopup()">ติดต่อแอดมิน</a>
                 </div>
@@ -942,92 +821,6 @@
                 <button class="btn btn-clear" onclick="clearAll()">🗑️ ล้าง</button>
                 <button class="btn btn-action" id="soundToggle" onclick="toggleSound()">🔊 ปิดเสียง</button>
             </div>
-            <div class="lesson-section" id="lesson5">
-                <h2>เลขผสม ห้า</h2>
-                <p>บทเรียนนี้ฝึกการบวกและลบเลขที่เกี่ยวข้องกับ 5 เพื่อช่วยให้คำนวณเร็วและเข้าใจการใช้เลขผสมในใจได้ดีขึ้น.</p>
-
-                <div class="lesson-example">
-                    <figure>
-                        <div class="example-hands">
-                            <img id="counting-hand-4" src="images/right/1.png" alt="มือขวา นับเลข">
-                        </div>
-                        <p>1 + 4 = 5</p>
-                        <button class="btn btn-action example-btn" id="example-btn-4" onclick="toggleExample(this, 4, [1,2,3,4,5])">แสดงตัวอย่าง</button>
-                    </figure>
-                    <figure>
-                        <div class="example-hands">
-                            <img id="counting-hand-1" src="images/right/2.png" alt="มือขวา นับเลข">
-                        </div>
-                        <p>2 + 3 = 5</p>
-                        <button class="btn btn-action example-btn" id="example-btn-1" onclick="toggleExample(this, 1, [2,3,4,5])">แสดงตัวอย่าง</button>
-                    </figure>
-                    <figure>
-                        <div class="example-hands">
-                            <img id="counting-hand-3" src="images/right/3.png" alt="มือขวา นับเลข">
-                        </div>
-                        <p>3 + 2 = 5</p>
-                        <button class="btn btn-action example-btn" id="example-btn-3" onclick="toggleExample(this, 3, [3,4,5])">แสดงตัวอย่าง</button>
-                    </figure>
-                    <figure>
-                        <div class="example-hands">
-                            <img id="counting-hand-2" src="images/right/4.png" alt="มือขวา นับเลข">
-                        </div>
-                        <p>4 + 1 = 5</p>
-                        <button class="btn btn-action example-btn" id="example-btn-2" onclick="toggleExample(this, 2, [4,5])">แสดงตัวอย่าง</button>
-                    </figure>
-                </div>
-
-            </div>
-
-            <div class="lesson-section" id="lesson10">
-                <h2>เลขผสม สิบ</h2>
-                <p>บทเรียนนี้สอนการรวมตัวเลขให้ได้ 10 และการลบเพื่อให้ผลลัพธ์เป็น 10 โดยฝึกทั้งการนับและการคำนวณในใจ.</p>
-
-                <div class="lesson-example">
-                    <figure>
-                        <div class="example-hands">
-                            <img id="counting-hand-10-left" src="images/left/0.png" alt="มือซ้าย นับเลข">
-                            <img id="counting-hand-10-right" src="images/right/1.png" alt="มือขวา นับเลข">
-                        </div>
-                        <p>1 + 9 = 10</p>
-                        <button class="btn btn-action example-btn" id="example-btn-10" onclick="toggleExampleSub(this, 10, 'both', [1,2,3,4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
-                    </figure>
-                    <figure>
-                        <div class="example-hands">
-                            <img id="counting-hand-11-left" src="images/left/0.png" alt="มือซ้าย นับเลข">
-                            <img id="counting-hand-11-right" src="images/right/2.png" alt="มือขวา นับเลข">
-                        </div>
-                        <p>2 + 8 = 10</p>
-                        <button class="btn btn-action example-btn" id="example-btn-11" onclick="toggleExampleSub(this, 11, 'both', [2,3,4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
-                    </figure>
-                    <figure>
-                        <div class="example-hands">
-                            <img id="counting-hand-12-left" src="images/left/0.png" alt="มือซ้าย นับเลข">
-                            <img id="counting-hand-12-right" src="images/right/3.png" alt="มือขวา นับเลข">
-                        </div>
-                        <p>3 + 7 = 10</p>
-                        <button class="btn btn-action example-btn" id="example-btn-12" onclick="toggleExampleSub(this, 12, 'both', [3,4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
-                    </figure>
-                    <figure>
-                        <div class="example-hands">
-                            <img id="counting-hand-16-left" src="images/left/0.png" alt="มือซ้าย นับเลข">
-                            <img id="counting-hand-16-right" src="images/right/4.png" alt="มือขวา นับเลข">
-                        </div>
-                        <p>4 + 6 = 10</p>
-                        <button class="btn btn-action example-btn" id="example-btn-16" onclick="toggleExampleSub(this, 16, 'both', [4,5,6,7,8,9,10])">แสดงตัวอย่าง</button>
-                    </figure>
-                    <figure>
-                        <div class="example-hands">
-                            <img id="counting-hand-17-left" src="images/left/0.png" alt="มือซ้าย นับเลข">
-                            <img id="counting-hand-17-right" src="images/right/5.png" alt="มือขวา นับเลข">
-                        </div>
-                        <p>5 + 5 = 10</p>
-                        <button class="btn btn-action example-btn" id="example-btn-17" onclick="toggleExampleSub(this, 17, 'both', [5,6,7,8,9,10])">แสดงตัวอย่าง</button>
-                    </figure>
-                </div>
-
-            </div>
-
             <div class="practice-section" id="practice">
                 <h2>โจทย์ฝึก</h2>
                 <p>เลือกแบบโจทย์ แล้วลองคิดในใจก่อนกดเฉลย</p>
@@ -1087,148 +880,25 @@
         let currentPracticeProblem = null;
         let soundEnabled = true;
         let speechSynth = window.speechSynthesis;
+        let currentSpeechResolve = null;
+        let currentSpeechUtterance = null;
         let lastSpokenNumber = -1;
-        let currentAnimationType = null; // 'count', 'practice', 'example', 'examplesub'
+        let currentAnimationType = null; // 'count'
         let currentAnimationBtn = null;
 
-        function getInitialAudioDebugEnabled() {
-            const hasDebugParam = new URLSearchParams(window.location.search).has('debugAudio');
+        function getInitialSpeechDebugEnabled() {
+            const hasDebugParam = new URLSearchParams(window.location.search).has('debugSpeech');
             try {
-                return hasDebugParam || localStorage.getItem('fingerMathAudioDebug') === '1';
+                return hasDebugParam || localStorage.getItem('fingerMathSpeechDebug') === '1';
             } catch (error) {
                 return hasDebugParam;
             }
         }
 
-        const audioDebugState = {
-            enabled: getInitialAudioDebugEnabled(),
+        const speechDebugState = {
+            enabled: getInitialSpeechDebugEnabled(),
             history: []
         };
-
-        // Audio Pool for playing voice files
-        class AudioPool {
-            constructor() {
-                this.pool = {};
-                this.preloadQueue = [];
-                this.loadedCount = 0;
-                this.totalCount = 0;
-                this.currentSequenceId = 0;
-            }
-
-            getAudioPath(num) {
-                return `audio/${num}.mp3`;
-            }
-
-            async playAudio(audio, filename) {
-                try {
-                    await audio.play();
-                    return true;
-                } catch (error) {
-                    if (error.name !== 'AbortError') {
-                        console.warn(`Failed to play audio: ${filename}`, error);
-                    }
-                    return false;
-                }
-            }
-
-            preload(audioFiles, callback) {
-                this.totalCount = audioFiles.length;
-                this.loadedCount = 0;
-
-                audioFiles.forEach(filename => {
-                    const audio = new Audio();
-                    audio.preload = 'auto';
-                    audio.src = this.getAudioPath(filename);
-                    audio.addEventListener('canplaythrough', () => {
-                        this.loadedCount++;
-                        if (this.loadedCount === this.totalCount && callback) {
-                            callback();
-                        }
-                    });
-                    audio.addEventListener('error', () => {
-                        this.loadedCount++;
-                        console.warn(`Failed to load audio: ${filename}`);
-                    });
-                    this.pool[filename] = audio;
-                });
-            }
-
-            async play(filename, delay = 0) {
-                if (delay > 0) {
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                }
-                if (!soundEnabled) return;
-                
-                // Clear any existing sequences when playing a single sound (if needed)
-                // but usually speak* functions handle this.
-                
-                if (this.pool[filename]) {
-                    const audio = this.pool[filename];
-                    audio.currentTime = 0;
-                    await this.playAudio(audio, filename);
-                }
-            }
-
-            async playSequence(filenames, gap = 50) {
-                const seqId = ++this.currentSequenceId;
-                
-                for (let i = 0; i < filenames.length; i++) {
-                    if (!soundEnabled || seqId !== this.currentSequenceId) break;
-                    
-                    if (this.pool[filenames[i]]) {
-                        const audio = this.pool[filenames[i]];
-                        audio.currentTime = 0;
-                        const played = await this.playAudio(audio, filenames[i]);
-                        if (!played || seqId !== this.currentSequenceId) continue;
-                        
-                        if (i < filenames.length - 1) {
-                            await new Promise(resolve => {
-                                let isResolved = false;
-                                const finish = () => {
-                                    if (isResolved) return;
-                                    isResolved = true;
-                                    audio.onended = null;
-                                    resolve();
-                                };
-                                const timer = setTimeout(() => {
-                                    finish();
-                                }, 1500); // fallback
-                                
-                                audio.onended = () => {
-                                    clearTimeout(timer);
-                                    setTimeout(finish, gap);
-                                };
-                            });
-                        }
-                    }
-                }
-            }
-
-            stop(filename) {
-                if (this.pool[filename]) {
-                    this.pool[filename].pause();
-                    this.pool[filename].currentTime = 0;
-                }
-            }
-
-            stopAll() {
-                this.currentSequenceId++; // Invalidate current sequence
-                Object.values(this.pool).forEach(audio => {
-                    audio.pause();
-                    audio.currentTime = 0;
-                    audio.onended = null; // Clear callbacks
-                });
-            }
-        }
-
-        const audioPool = new AudioPool();
-
-        // Preload all audio files
-        const audioFiles = [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 20, 21, 30, 31, 40, 41, 50, 51, 60, 61, 70, 71, 80, 81, 90, 91, 100,
-            'plus', 'minus', 'hundreds', 'tens', 'units'
-        ];
-        audioPool.preload(audioFiles);
 
         const practiceLabels = {
             'add-no-carry': 'บวก: ไม่ทด',
@@ -1311,214 +981,183 @@
             return result;
         }
 
-        async function speakProblem(a, operator, b) {
-            if (!soundEnabled) return;
-            audioPool.stopAll();
-            const opFile = operator === '+' ? 'plus' : 'minus';
-            const files = [...getAudioFilesForNumber(a), opFile, ...getAudioFilesForNumber(b)];
-            debugAudioSequence(`problem ${a} ${operator} ${b}`, files);
-            await audioPool.playSequence(files, 50);
+        function operatorToThai(operator) {
+            return operator === '+' ? 'บวก' : 'ลบ';
         }
 
-        async function speakUnitsProblem(unitsA, operator, unitsB) {
-            if (!soundEnabled) return;
-            audioPool.stopAll();
-            const opFile = operator === '+' ? 'plus' : 'minus';
-            const files = ['units', ...getAudioFilesForNumber(unitsA), opFile, ...getAudioFilesForNumber(unitsB)];
-            debugAudioSequence(`units ${unitsA} ${operator} ${unitsB}`, files);
-            await audioPool.playSequence(files, 50);
+        function normalizeSpeechSegments(segments) {
+            return segments.flat().map(segment => segment.toString().trim()).filter(Boolean);
         }
 
-        async function speakTensProblem(tens, operator, tensB) {
-            if (!soundEnabled) return;
-            audioPool.stopAll();
-            const opFile = operator === '+' ? 'plus' : 'minus';
-            const files = ['tens', ...getAudioFilesForNumber(tens), opFile, ...getAudioFilesForNumber(tensB)];
-            debugAudioSequence(`tens ${tens} ${operator} ${tensB}`, files);
-            await audioPool.playSequence(files, 50);
-        }
-
-        async function speakAnswer(result) {
-            if (!soundEnabled) return;
-            audioPool.stopAll();
-            // Speak "ตอบ" using Web Speech as we don't have a file for it
-            speechSynth.cancel();
-            const utterance = new SpeechSynthesisUtterance('ตอบ');
-            utterance.lang = 'th-TH';
-            speechSynth.speak(utterance);
-            
-            // Wait a bit for "ตอบ" to finish then play the number files
-            await new Promise(resolve => {
-                utterance.onend = resolve;
-                setTimeout(resolve, 800); // Fallback
-            });
-            
-            const files = getAudioFilesForNumber(result);
-            if (files.length > 0) {
-                debugAudioSequence(`answer ${result}`, files);
-                await audioPool.playSequence(files, 50);
-            } else if (result === 0) {
-                debugAudioSequence('answer 0', ['0']);
-                await audioPool.play('0');
-            }
-        }
-
-        async function speakCount(count) {
-            if (!soundEnabled) return;
-            audioPool.stopAll();
-            const files = getAudioFilesForNumber(count);
-            if (files.length > 0) {
-                debugAudioSequence(`count ${count}`, files);
-                await audioPool.playSequence(files, 50);
-            } else if (count === 0) {
-                debugAudioSequence('count 0', ['0']);
-                await audioPool.play('0');
-            }
-        }
-
-
-        function getAudioFilesForNumber(num) {
-            if (num === 0) return []; // Skip zero or return ['0'] if file exists
-            
-            let sequence = [];
-            let n = Math.floor(Math.abs(num));
-            
-            if (num < 0) sequence.push('minus');
-            
-            if (n >= 100) {
-                const hundreds = Math.floor(n / 100);
-                if (hundreds === 1) {
-                    sequence.push('100'); // "หนึ่งร้อย"
-                } else {
-                    sequence.push(hundreds.toString());
-                    sequence.push('hundreds'); // "ร้อย"
-                }
-                n %= 100;
-            }
-            
-            if (n > 0) {
-                // If the remaining part has a direct file (e.g., 11, 21, 31, 1-9, 10, 20...)
-                if (audioPool.pool[n.toString()]) {
-                    sequence.push(n.toString());
-                } else {
-                    // Separate into tens and units
-                    const tens = Math.floor(n / 10);
-                    const units = n % 10;
-                    
-                    if (tens > 0) {
-                        sequence.push((tens * 10).toString());
-                    }
-                    if (units > 0) {
-                        sequence.push(units.toString());
-                    }
-                }
-            }
-            
-            return sequence;
-        }
-
-        function createAudioDebugEntry(label, files) {
-            const ids = files.map(file => file.toString());
-            const paths = ids.map(id => audioPool.getAudioPath(id));
-            const missing = ids.filter(id => !audioPool.pool[id]).map(id => audioPool.getAudioPath(id));
-
+        function createSpeechDebugEntry(label, segments) {
+            const utterances = normalizeSpeechSegments(segments);
             return {
                 label,
-                ids,
-                paths,
-                missing,
-                ok: missing.length === 0
+                utterances,
+                text: utterances.join(' '),
+                ok: true
             };
         }
 
-        function debugAudioSequence(label, files) {
-            const entry = createAudioDebugEntry(label, files);
-            audioDebugState.history.push(entry);
-            if (audioDebugState.history.length > 50) {
-                audioDebugState.history.shift();
+        function debugSpeechSequence(label, segments) {
+            const entry = createSpeechDebugEntry(label, segments);
+            speechDebugState.history.push(entry);
+            if (speechDebugState.history.length > 50) {
+                speechDebugState.history.shift();
             }
 
-            if (audioDebugState.enabled) {
-                const status = entry.ok ? 'ok' : `missing: ${entry.missing.join(', ')}`;
-                console.info(`[audio-debug] ${entry.label}: ${entry.paths.join(' + ')} (${status})`);
+            if (speechDebugState.enabled) {
+                console.info(`[speech-debug] ${entry.label}: ${entry.text}`);
             }
 
             return entry;
         }
 
-        function buildProblemAudioFiles(a, operator, b) {
-            const opFile = operator === '+' ? 'plus' : 'minus';
-            return [...getAudioFilesForNumber(a), opFile, ...getAudioFilesForNumber(b)];
+        function buildProblemSpeechSegments(a, operator, b) {
+            return [numberToThai(a), operatorToThai(operator), numberToThai(b)];
         }
 
-        window.audioDebug = {
+        function buildUnitsSpeechSegments(unitsA, operator, unitsB) {
+            return ['หลักหน่วย', numberToThaiOnly(unitsA), operatorToThai(operator), numberToThaiOnly(unitsB)];
+        }
+
+        function buildTensSpeechSegments(tens, operator, tensB) {
+            return ['หลักสิบ', numberToThaiOnly(tens), operatorToThai(operator), numberToThaiOnly(tensB)];
+        }
+
+        function buildNumberSpeechSegments(num) {
+            return [numberToThai(num)];
+        }
+
+        function buildAnswerSpeechSegments(result) {
+            return ['ตอบ', numberToThai(result)];
+        }
+
+        window.speechDebug = {
             enable() {
-                audioDebugState.enabled = true;
+                speechDebugState.enabled = true;
                 try {
-                    localStorage.setItem('fingerMathAudioDebug', '1');
+                    localStorage.setItem('fingerMathSpeechDebug', '1');
                 } catch (error) {
-                    console.warn('Audio debug is enabled for this page, but could not be saved to localStorage.', error);
+                    console.warn('Speech debug is enabled for this page, but could not be saved to localStorage.', error);
                 }
-                return audioDebugState.enabled;
+                return speechDebugState.enabled;
             },
             disable() {
-                audioDebugState.enabled = false;
+                speechDebugState.enabled = false;
                 try {
-                    localStorage.removeItem('fingerMathAudioDebug');
+                    localStorage.removeItem('fingerMathSpeechDebug');
                 } catch (error) {
-                    console.warn('Audio debug was disabled for this page, but localStorage could not be updated.', error);
+                    console.warn('Speech debug was disabled for this page, but localStorage could not be updated.', error);
                 }
-                return audioDebugState.enabled;
+                return speechDebugState.enabled;
             },
             clear() {
-                audioDebugState.history = [];
+                speechDebugState.history = [];
                 return [];
             },
             history() {
-                return [...audioDebugState.history];
+                return [...speechDebugState.history];
             },
             number(number) {
-                const files = getAudioFilesForNumber(number);
-                return createAudioDebugEntry(`number ${number}`, files.length ? files : ['0']);
+                return createSpeechDebugEntry(`number ${number}`, buildNumberSpeechSegments(number));
             },
             problem(a, operator, b) {
-                return createAudioDebugEntry(`problem ${a} ${operator} ${b}`, buildProblemAudioFiles(a, operator, b));
+                return createSpeechDebugEntry(`problem ${a} ${operator} ${b}`, buildProblemSpeechSegments(a, operator, b));
             },
             units(unitsA, operator, unitsB) {
-                const opFile = operator === '+' ? 'plus' : 'minus';
-                return createAudioDebugEntry(`units ${unitsA} ${operator} ${unitsB}`, ['units', ...getAudioFilesForNumber(unitsA), opFile, ...getAudioFilesForNumber(unitsB)]);
+                return createSpeechDebugEntry(`units ${unitsA} ${operator} ${unitsB}`, buildUnitsSpeechSegments(unitsA, operator, unitsB));
             },
             tens(tensA, operator, tensB) {
-                const opFile = operator === '+' ? 'plus' : 'minus';
-                return createAudioDebugEntry(`tens ${tensA} ${operator} ${tensB}`, ['tens', ...getAudioFilesForNumber(tensA), opFile, ...getAudioFilesForNumber(tensB)]);
+                return createSpeechDebugEntry(`tens ${tensA} ${operator} ${tensB}`, buildTensSpeechSegments(tensA, operator, tensB));
             },
             answer(result) {
-                const files = getAudioFilesForNumber(result);
-                return createAudioDebugEntry(`answer ${result}`, files.length ? files : ['0']);
+                return createSpeechDebugEntry(`answer ${result}`, buildAnswerSpeechSegments(result));
             }
         };
+
+        function cancelSpeech() {
+            const resolveSpeech = currentSpeechResolve;
+            currentSpeechResolve = null;
+            currentSpeechUtterance = null;
+            if (speechSynth) {
+                speechSynth.cancel();
+            }
+            if (resolveSpeech) {
+                resolveSpeech();
+            }
+        }
+
+        async function speakText(text) {
+            if (!text || !speechSynth || typeof SpeechSynthesisUtterance === 'undefined') return;
+
+            cancelSpeech();
+            await new Promise(resolve => {
+                let isResolved = false;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'th-TH';
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+
+                const finish = () => {
+                    if (isResolved) return;
+                    isResolved = true;
+                    if (currentSpeechUtterance === utterance) {
+                        currentSpeechUtterance = null;
+                        currentSpeechResolve = null;
+                    }
+                    resolve();
+                };
+
+                currentSpeechUtterance = utterance;
+                currentSpeechResolve = finish;
+                utterance.onend = finish;
+                utterance.onerror = finish;
+
+                try {
+                    speechSynth.speak(utterance);
+                } catch (error) {
+                    console.warn('Failed to speak text.', error);
+                    finish();
+                }
+            });
+        }
+
+        async function speakSegments(label, segments) {
+            if (!soundEnabled) return;
+            const entry = debugSpeechSequence(label, segments);
+            await speakText(entry.text);
+        }
+
+        async function speakProblem(a, operator, b) {
+            await speakSegments(`problem ${a} ${operator} ${b}`, buildProblemSpeechSegments(a, operator, b));
+        }
+
+        async function speakUnitsProblem(unitsA, operator, unitsB) {
+            await speakSegments(`units ${unitsA} ${operator} ${unitsB}`, buildUnitsSpeechSegments(unitsA, operator, unitsB));
+        }
+
+        async function speakTensProblem(tens, operator, tensB) {
+            await speakSegments(`tens ${tens} ${operator} ${tensB}`, buildTensSpeechSegments(tens, operator, tensB));
+        }
+
+        async function speakAnswer(result) {
+            await speakSegments(`answer ${result}`, buildAnswerSpeechSegments(result));
+        }
+
+        async function speakCount(count) {
+            await speakSegments(`count ${count}`, buildNumberSpeechSegments(count));
+        }
 
         async function speakNumber(num, priority = false) {
             if (!soundEnabled) return;
             if (num === lastSpokenNumber && !priority) return;
             lastSpokenNumber = num;
-
-            // Stop current speech
-            audioPool.stopAll();
-
-            const files = getAudioFilesForNumber(num);
-            if (files.length > 0) {
-                debugAudioSequence(`number ${num}`, files);
-                await audioPool.playSequence(files, 50); // Small gap for natural flow
-            } else if (num === 0) {
-                debugAudioSequence('number 0', ['0']);
-                await audioPool.play('0');
-            }
+            await speakSegments(`number ${num}`, buildNumberSpeechSegments(num));
         }
 
         function stopSpeaking() {
-            speechSynth.cancel();
-            audioPool.stopAll();
+            cancelSpeech();
             lastSpokenNumber = -1;
         }
 
@@ -1555,10 +1194,6 @@
             const practiceBtn = document.getElementById('practiceBtn');
             if (practiceBtn) practiceBtn.innerHTML = '🎲 สุ่มจำนวน';
 
-            // Reset example buttons
-            document.querySelectorAll('.example-btn').forEach(btn => {
-                btn.innerHTML = 'แสดงตัวอย่าง';
-            });
             currentAnimationType = null;
             currentAnimationBtn = null;
         }
@@ -1840,16 +1475,16 @@
 
             // Step 1: Speak full problem
             updateSteps([{ value: a, label: `โจทย์: ${numberToThaiOnly(a)} ${operator === '+' ? 'บวก' : 'ลบ'} ${numberToThaiOnly(b)}` }]);
-            speakProblem(a, operator, b);
-            await sleep(2500);
+            await speakProblem(a, operator, b);
+            await sleep(soundEnabled ? 300 : 2500);
 
             if (!isAnimating) return;
 
             // Step 2: Units - speak problem
             const opText = operator === '+' ? 'บวก' : 'ลบ';
             updateSteps([{ value: unitsA, label: `หน่วย: ${numberToThaiOnly(unitsA)} ${opText} ${numberToThaiOnly(unitsB)}` }]);
-            speakUnitsProblem(unitsA, operator, unitsB);
-            await sleep(2000);
+            await speakUnitsProblem(unitsA, operator, unitsB);
+            await sleep(soundEnabled ? 300 : 2000);
 
             if (!isAnimating) return;
 
@@ -1872,16 +1507,16 @@
                         carry = 1;
                         currentTens++;
                         updatePracticeHandsHandsOnly(currentTens, currentUnits);
-                        speakCount(count);
+                        await speakCount(count);
                         updateSteps([{ value: count, label: `ทด ${carry}: หน่วย ${currentUnits}` }]);
                     } else {
                         updatePracticeHandsHandsOnly(currentTens, currentUnits);
-                        speakCount(count);
+                        await speakCount(count);
                         updateSteps([{ value: count, label: `นับ ${count}: หน่วย ${currentUnits}` }]);
                     }
 
                     document.getElementById('practiceVerticalResult').textContent = currentTens * 10 + currentUnits;
-                    await sleep(1500);
+                    await sleep(soundEnabled ? 300 : 1500);
                 }
             } else {
                 // Subtraction - borrow from tens
@@ -1895,16 +1530,16 @@
                         currentTens--;
                         borrow = 1;
                         updatePracticeHandsHandsOnly(currentTens, currentUnits);
-                        speakCount(count);
+                        await speakCount(count);
                         updateSteps([{ value: count, label: `ยืม ${borrow}: หน่วย ${currentUnits}` }]);
                     } else {
                         updatePracticeHandsHandsOnly(currentTens, currentUnits);
-                        speakCount(count);
+                        await speakCount(count);
                         updateSteps([{ value: count, label: `ลบ ${count}: หน่วย ${currentUnits}` }]);
                     }
 
                     document.getElementById('practiceVerticalResult').textContent = currentTens * 10 + currentUnits;
-                    await sleep(1500);
+                    await sleep(soundEnabled ? 300 : 1500);
                 }
             }
 
@@ -1916,8 +1551,8 @@
             
             if (bTens > 0 || (operator === '+' && carry > 0) || (operator === '-' && borrow > 0)) {
                 updateSteps([{ value: tensAfterUnits, label: `สิบ: ${tensAfterUnits} ${opText} ${bTens} ${carry > 0 ? '(รวมทด)' : (borrow > 0 ? '(รวมยืม)' : '')}` }]);
-                speakTensProblem(tensAfterUnits, operator, bTens);
-                await sleep(2000);
+                await speakTensProblem(tensAfterUnits, operator, bTens);
+                await sleep(soundEnabled ? 300 : 2000);
 
                 if (!isAnimating) return;
 
@@ -1931,9 +1566,9 @@
                     currentTens = i;
                     updatePracticeHandsHandsOnly(currentTens, currentUnits);
                     document.getElementById('practiceVerticalResult').textContent = currentTens * 10 + currentUnits;
-                    speakNumber(currentTens * 10 + currentUnits, true);
+                    await speakNumber(currentTens * 10 + currentUnits, true);
                     updateSteps([{ value: currentTens * 10 + currentUnits, label: `สิบ: ${i}` }]);
-                    await sleep(1500);
+                    await sleep(soundEnabled ? 300 : 1500);
                 }
             }
 
@@ -1945,12 +1580,9 @@
                 // Simplified hundred logic: just update display if it changed
                 const finalHundreds = Math.floor(result / 100);
                 if (finalHundreds !== hundredsA) {
-                    audioPool.stopAll();
-                    const files = ['hundreds'];
-                    debugAudioSequence('hundreds carry', files);
-                    audioPool.playSequence(files, 50);
+                    await speakSegments('hundreds carry', ['หลักร้อย']);
                     updateDisplay(result);
-                    await sleep(1500);
+                    await sleep(soundEnabled ? 300 : 1500);
                 }
             }
 
@@ -1961,7 +1593,7 @@
             updatePracticeHands(result);
             document.getElementById('practiceVerticalResult').textContent = result;
             document.getElementById('practiceAnswer').textContent = `คำตอบ: ${result}`;
-            speakAnswer(result);
+            await speakAnswer(result);
             document.getElementById('practiceQuestion').textContent = getPracticeHint(problem);
             updateSteps([{ value: result, label: `คำตอบ: ${numberToThai(result)}` }]);
 
@@ -2018,8 +1650,8 @@
             const step = operation === 'add' ? 1 : -1;
             for (let i = start + step; operation === 'add' ? i <= end : i >= end; i += step) {
                 updateDisplay(i);
-                speakNumber(i, true);
-                await sleep(2000); // 2 วินาทีต่อจำนวน
+                await speakNumber(i, true);
+                await sleep(soundEnabled ? 300 : 2000); // 2 วินาทีต่อจำนวนเมื่อปิดเสียง
             }
 
             updateSteps([{ value: end, label: `${start} ${opSymbol} ${amount} = ${end}` }]);
@@ -2064,15 +1696,15 @@
             if (btn) btn.innerHTML = '⏹️ หยุด';
             updateSteps([{ value: 0, label: 'เริ่มนับ: 0' }]);
             updateDisplay(0);
-            speakNumber(0, true);
-            await sleep(800);
+            await speakNumber(0, true);
+            await sleep(soundEnabled ? 300 : 800);
 
             for (let i = 1; i <= 99; i++) {
                 if (!isAnimating) break;
                 updateDisplay(i);
-                speakNumber(i, true);
+                await speakNumber(i, true);
                 updateSteps([{ value: i, label: `นับ: ${i}` }]);
-                await sleep(2000);
+                await sleep(soundEnabled ? 300 : 2000);
             }
 
             isAnimating = false;
@@ -2085,7 +1717,7 @@
         updateSteps([{ value: 0, label: 'เริ่มต้น: 0' }]);
 
         // Load voices for speech synthesis
-        if (speechSynth.onvoiceschanged !== undefined) {
+        if (speechSynth && speechSynth.onvoiceschanged !== undefined) {
             speechSynth.onvoiceschanged = () => {};
         }
 
@@ -2094,91 +1726,6 @@
             input.addEventListener('wheel', e => e.preventDefault());
         });
 
-        function toggleExample(btn, exampleId, sequence) {
-            if (isAnimating && currentAnimationType === 'example') {
-                stopCurrentAnimation();
-                return;
-            }
-            startCounting(btn, exampleId, sequence);
-        }
-
-        function toggleExampleSub(btn, exampleId, handType, sequence) {
-            if (isAnimating && currentAnimationType === 'examplesub') {
-                stopCurrentAnimation();
-                return;
-            }
-            startCountingSub(btn, exampleId, handType, sequence);
-        }
-
-        async function startCounting(btn, exampleId, sequence) {
-            if (isAnimating) return;
-            isAnimating = true;
-            currentAnimationType = 'example';
-            currentAnimationBtn = btn;
-            if (btn) btn.innerHTML = '⏹️ หยุด';
-
-            const img = document.getElementById(`counting-hand-${exampleId}`);
-            if (!img) {
-                isAnimating = false;
-                currentAnimationType = null;
-                if (btn) btn.innerHTML = 'แสดงตัวอย่าง';
-                return;
-            }
-
-            // Show each number in sequence with animation
-            for (let i = 0; i < sequence.length; i++) {
-                if (!isAnimating) break;
-                img.src = `images/right/${sequence[i]}.png`;
-                speakNumber(sequence[i], true);
-                await sleep(1500); // 1.5 seconds per number
-            }
-
-            isAnimating = false;
-            currentAnimationType = null;
-            if (btn) btn.innerHTML = 'แสดงตัวอย่าง';
-        }
-
-        async function startCountingSub(btn, exampleId, handType, sequence) {
-            if (isAnimating) return;
-            isAnimating = true;
-            currentAnimationType = 'examplesub';
-            currentAnimationBtn = btn;
-            if (btn) btn.innerHTML = '⏹️ หยุด';
-
-            let imgRight, imgLeft;
-            if (handType === 'both') {
-                imgLeft = document.getElementById(`counting-hand-${exampleId}-left`);
-                imgRight = document.getElementById(`counting-hand-${exampleId}-right`);
-            } else {
-                imgRight = document.getElementById(`counting-hand-${exampleId}`);
-            }
-
-            if (!imgRight || (handType === 'both' && !imgLeft)) {
-                isAnimating = false;
-                currentAnimationType = null;
-                if (btn) btn.innerHTML = 'แสดงตัวอย่าง';
-                return;
-            }
-
-            for (let i = 0; i < sequence.length; i++) {
-                if (!isAnimating) break;
-                const num = sequence[i];
-                if (handType === 'both') {
-                    const tens = Math.floor(num / 10);
-                    const units = num % 10;
-                    imgLeft.src = `images/left/${tens * 10}.png`;
-                    imgRight.src = `images/right/${units}.png`;
-                } else {
-                    imgRight.src = `images/right/${num}.png`;
-                }
-                speakNumber(num, true);
-                await sleep(1500);
-            }
-
-            isAnimating = false;
-            currentAnimationType = null;
-            if (btn) btn.innerHTML = 'แสดงตัวอย่าง';
-        }
     </script>
 </body>
 </html>
